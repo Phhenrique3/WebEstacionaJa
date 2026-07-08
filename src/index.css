@@ -1,0 +1,38 @@
+:root {
+  --color-primary: #4f35d9;
+  --color-primary-dark: #3f2ab7;
+
+  --color-background: #f4f6fb;
+  --color-surface: #ffffff;
+
+  --color-text: #111827;
+  --color-muted: #6b7280;
+
+  --color-border: #d1d5db;
+  --color-danger: #b91c1c;
+
+  --shadow-card: 0 24px 70px rgba(15, 23, 42, 0.12);
+
+  --radius-card: 28px;
+  --radius-input: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}

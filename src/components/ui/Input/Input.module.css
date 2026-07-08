@@ -1,0 +1,40 @@
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.input {
+  height: 52px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-input);
+  padding: 0 16px;
+  font-size: 15px;
+  outline: none;
+  color: var(--color-text);
+  background: #ffffff;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(79, 53, 217, 0.12);
+}
+
+.inputError {
+  border-color: var(--color-danger);
+}
+
+.errorMessage {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-danger);
+}
