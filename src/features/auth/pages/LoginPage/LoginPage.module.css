@@ -1,0 +1,165 @@
+.loginPage {
+  min-height: 100vh;
+  background: #eef1f8;
+  display: flex;
+  align-items: center;
+  padding-left: 80px;
+  gap: 120px;
+}
+
+.brandCard {
+  width: 560px;
+  height: 720px;
+  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.brandIcon {
+  font-size: 82px;
+  font-weight: 800;
+  color: #4f35d9;
+  line-height: 1;
+  margin-bottom: 28px;
+}
+
+.brandCard h1 {
+  margin: 0;
+  font-size: 38px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.brandCard p {
+  margin: 18px 0 0;
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.formCard {
+  width: 460px;
+  min-height: 590px;
+  border-radius: 22px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 65px;
+}
+
+.formHeader {
+  margin-bottom: 52px;
+}
+
+.formHeader h2 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.formHeader p {
+  margin: 12px 0 0;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.options {
+  margin: 28px 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rememberMe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.rememberMe input {
+  width: 16px;
+  height: 16px;
+  accent-color: #4f35d9;
+}
+
+.forgotPassword {
+  border: 0;
+  background: transparent;
+  color: #4f35d9;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.registerText {
+  margin: 40px 0 0;
+  text-align: center;
+  color: #6b7280;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.registerText button {
+  border: 0;
+  background: transparent;
+  color: #4f35d9;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+  .loginPage {
+    padding: 32px;
+    gap: 40px;
+  }
+
+  .brandCard {
+    width: 48%;
+  }
+
+  .formCard {
+    width: 420px;
+  }
+}
+
+@media (max-width: 850px) {
+  .loginPage {
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .brandCard {
+    display: none;
+  }
+
+  .formCard {
+    width: 100%;
+    max-width: 460px;
+    padding: 40px;
+  }
+
+  .errorMessage {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #fef2f2;
+    color: #ff0000;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+}
