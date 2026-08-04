@@ -50,7 +50,7 @@ export function LoginPage() {
         const message =
           error.response?.data?.message || "E-mail ou senha inválidos.";
 
-        setErrorMessage(message);
+         setErrorMessage(message);
         return;
       }
 

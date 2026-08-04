@@ -152,14 +152,14 @@
     padding: 40px;
   }
 
-  .errorMessage {
+}
+.errorMessage {
     width: 100%;
     padding: 14px 16px;
     border-radius: 10px;
     background: #fef2f2;
-    color: #ff0000;
+    color: #e53935;
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 24px;
   }
-}
