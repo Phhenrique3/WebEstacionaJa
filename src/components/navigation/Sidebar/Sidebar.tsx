@@ -54,8 +54,9 @@ export function Sidebar() {
     <aside className={styles.sidebar}>
       <div>
         <div className={styles.logo}>
-          <span>▣</span>
+          <span> ▣ </span>
           <strong>EstacioneJá</strong>
+            <link rel="stylesheet" href="/dashboard" />
         </div>
 
         <nav className={styles.nav}>

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Button } from "../../../../components/ui/Button";
 import { Input } from "../../../../components/ui/Input";
+import logo from "../../../../assets/img/logo.png";
 import { forgotPassword } from "../../services/authService";
 
 import styles from "./ForgotPasswordPage.module.css";
@@ -60,9 +61,7 @@ export function ForgotPasswordPage() {
   return (
     <main className={styles.page}>
       <section className={styles.brandCard}>
-        <div className={styles.brandIcon}>▣</div>
-
-        <h1>EstacioneJá</h1>
+        <img className={styles.brandLogo} src={logo} alt="EstacioneJá" />
 
         <p>Sistema de gestão de estacionamento</p>
       </section>

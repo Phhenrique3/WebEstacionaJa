@@ -12,18 +12,37 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 38px;
-  padding: 0 10px;
+  justify-content: center;
+  margin-bottom: 32px;
 }
 
-.logo span {
-  font-size: 18px;
+.logoLink {
+  position: relative;
+  display: block;
+  width: 195px;
+  height: 145px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(11, 7, 45, 0.3);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.logo strong {
-  font-size: 18px;
-  font-weight: 800;
+.logoLink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(11, 7, 45, 0.4);
+}
+
+.logoImage {
+  position: absolute;
+  top: -58px;
+  left: -164px;
+  width: 520px;
+  max-width: none;
+  height: auto;
+  display: block;
 }
 
 .nav {

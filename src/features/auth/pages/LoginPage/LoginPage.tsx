@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../components/ui/Button";
 import { Input } from "../../../../components/ui/Input";
 import { login } from "../../services/authService";
+import logo from "../../../../assets/img/logo.png";
 
 import styles from "./LoginPage.module.css";
 
@@ -63,9 +64,7 @@ export function LoginPage() {
   return (
     <main className={styles.loginPage}>
       <section className={styles.brandCard}>
-        <div className={styles.brandIcon}>▣</div>
-
-        <h1>EstacioneJá</h1>
+        <img className={styles.brandLogo} src={logo} alt="EstacioneJá" />
 
         <p>Sistema de gestão de estacionamento</p>
       </section>

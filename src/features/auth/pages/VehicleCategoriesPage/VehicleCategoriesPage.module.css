@@ -181,6 +181,19 @@
   display: flex;
   flex-direction: column;
   gap: 22px;
+
+  .formGroup {
+    display: flex;
+    gap: 30px;
+  }
+    .formGroup select {
+      font-size: 14px;
+    }
+    
+}
+
+.form Input {
+  border-color: black;
 }
 
 .modalActions {
@@ -196,6 +209,7 @@
     flex-direction: column;
     gap: 16px;
   }
+
 
   .tableCard {
     overflow-x: auto;
