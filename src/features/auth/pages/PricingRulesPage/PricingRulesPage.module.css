@@ -220,6 +220,13 @@
   margin-top: 8px;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
 @media (max-width: 900px) {
   .header {
     align-items: flex-start;
