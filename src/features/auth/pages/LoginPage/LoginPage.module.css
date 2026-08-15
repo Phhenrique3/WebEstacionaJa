@@ -1,3 +1,5 @@
+
+
 .loginPage {
   min-height: 100vh;
   background: #eef1f8;
@@ -144,13 +146,49 @@
   }
 
 }
+
+.passwordField {
+  position: relative;
+}
+
+.passwordField input {
+  padding-right: 52px;
+}
+
+.eye {
+  position: absolute;
+  right: 12px;
+  bottom: 0;
+  width: 40px;
+  height: 55px;
+  border: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  font-size: 19px;
+  cursor: pointer;
+  opacity: 0.65;
+}
+
+.eye:hover,
+.eye:focus-visible {
+  opacity: 1;
+}
+
+.eye:focus-visible {
+  outline: 2px solid #4f35d9;
+  outline-offset: -6px;
+  border-radius: 8px;
+}
+
 .errorMessage {
-    width: 100%;
-    padding: 14px 16px;
-    border-radius: 10px;
-    background: #fef2f2;
-    color: #e53935;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 24px;
-  }
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #e53935;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}

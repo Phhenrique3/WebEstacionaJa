@@ -3,21 +3,27 @@ import { useState } from "react";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 
+
 import { Button } from "../../../../components/ui/Button";
 import { Input } from "../../../../components/ui/Input";
 import { login } from "../../services/authService";
 import logo from "../../../../assets/img/logo.png";
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import styles from "./LoginPage.module.css";
 
 export function LoginPage() {
   const navigate = useNavigate();
 
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,7 +57,7 @@ export function LoginPage() {
         const message =
           error.response?.data?.message || "E-mail ou senha inválidos.";
 
-         setErrorMessage(message);
+        setErrorMessage(message);
         return;
       }
 
@@ -90,21 +96,30 @@ export function LoginPage() {
               onChange={(event) => setEmail(event.target.value)}
             />
 
-            <Input
-              label="Senha"
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
+            <div className={styles.passwordField}>
+              <Input
+                label="Senha"
+                name="password"
+                type={mostrarSenha ? "text" : "password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+              <button
+                className={styles.eye}
+                type="button"
+                onClick={() => setMostrarSenha(!mostrarSenha)}
+                aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+                title={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+              >
+                <i
+                  className={mostrarSenha ? "bi bi-eye-slash" : "bi bi-eye"}
+                />
+              </button>
+            </div>
           </div>
 
           <div className={styles.options}>
-            <label className={styles.rememberMe}>
-              <input type="checkbox" />
-              <span>Lembrar-me</span>
-            </label>
             <button
               type="button"
               className={styles.forgotPassword}

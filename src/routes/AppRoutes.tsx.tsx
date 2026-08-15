@@ -9,6 +9,7 @@ import { VehicleCategoriesPage } from "../../src/features/auth/pages/VehicleCate
 
 import { DashboardLayout } from "../layouts/DashboardLayout";
 import { PricingRulesPage } from "../features/auth/pages/PricingRulesPage";
+import { ClientPage } from "../features/auth/pages/client";
 
 export function AppRoutes() {
   return (
@@ -23,7 +24,7 @@ export function AppRoutes() {
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
 
-          <Route path="/clientes" element={<h1>Clientes</h1>} />
+          <Route path="/clientes" element={<ClientPage />} />
           <Route path="/veiculos" element={<h1>Veículos</h1>} />
 
           <Route

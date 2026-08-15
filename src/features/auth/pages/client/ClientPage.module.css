@@ -1,0 +1,46 @@
+.page { width: 100%; }
+
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; gap: 20px; }
+.header h1 { margin: 0; font-size: 32px; font-weight: 800; color: #111827; }
+.header p { margin: 8px 0 0; color: #6b7280; font-size: 15px; }
+
+.searchBox { width: 100%; height: 64px; border-radius: 14px; background: #fff; border: 1px solid #d1d5db; display: flex; align-items: center; padding: 0 24px; margin-bottom: 28px; }
+.searchBox:focus-within { border-color: #4f35d9; box-shadow: 0 0 0 4px rgba(79, 53, 217, .1); }
+.searchBox span { font-size: 20px; margin-right: 10px; }
+.searchBox input { width: 100%; height: 100%; border: 0; outline: 0; font-size: 16px; color: #111827; background: transparent; }
+.searchBox input::placeholder { color: #9ca3af; }
+
+.tableCard { width: 100%; min-height: 420px; background: #fff; border: 1px solid #e5e7eb; border-radius: 18px; padding: 28px; overflow-x: auto; }
+.table { width: 100%; min-width: 800px; border-collapse: collapse; }
+.table th { color: #6b7280; font-size: 14px; font-weight: 800; text-align: left; padding: 14px 8px 20px; border-bottom: 1px solid #e5e7eb; }
+.table td { color: #111827; font-size: 15px; font-weight: 500; padding: 22px 8px; border-bottom: 1px solid #e5e7eb; }
+.table tr:last-child td { border-bottom: 0; }
+.actions { display: flex; align-items: center; gap: 12px; }
+.actions button { display: grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 8px; background: transparent; font-size: 18px; cursor: pointer; }
+.actions button:hover { background: #f3f4f6; }
+.emptyMessage, .loadingText { text-align: center; color: #6b7280; padding: 40px 0; }
+.errorMessage { width: 100%; padding: 14px 16px; border-radius: 10px; background: #fef2f2; color: #b91c1c; font-size: 14px; font-weight: 600; margin-bottom: 24px; }
+
+.modalOverlay { position: fixed; inset: 0; background: rgba(15, 23, 42, .48); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 20; }
+.modal { width: 100%; max-width: 680px; max-height: calc(100vh - 48px); overflow-y: auto; border-radius: 22px; background: #fff; padding: 32px; border: 1px solid #e5e7eb; box-shadow: 0 24px 70px rgba(15, 23, 42, .22); }
+.modalHeader { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 20px; }
+.modalHeader h2 { margin: 0; font-size: 26px; color: #111827; }
+.modalHeader p { margin: 8px 0 0; color: #6b7280; }
+.modalHeader button { border: 0; background: transparent; font-size: 30px; line-height: 1; cursor: pointer; color: #6b7280; }
+.form { display: flex; flex-direction: column; gap: 22px; }
+.formRow { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.formGroup { display: flex; flex-direction: column; gap: 10px; }
+.formGroup label { font-size: 14px; font-weight: 600; color: #6b7280; }
+.formGroup select { width: 100%; height: 55px; border: 1px solid #d1d5db; border-radius: 8px; padding: 0 18px; font: inherit; font-size: 15px; color: #111827; outline: 0; background: #fff; }
+.formGroup select:focus { border-color: #4f35d9; box-shadow: 0 0 0 4px rgba(79, 53, 217, .12); }
+.modalActions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+
+@media (max-width: 700px) {
+  .header { align-items: flex-start; flex-direction: column; }
+  .header h1 { font-size: 28px; }
+  .tableCard { padding: 18px; }
+  .modal { padding: 24px; }
+  .formRow { grid-template-columns: 1fr; }
+  .modalActions { flex-direction: column-reverse; }
+  .modalActions button { width: 100%; }
+}

@@ -53,11 +53,12 @@ export function Sidebar() {
   return (
     <aside className={styles.sidebar}>
       <div>
-        <div className={styles.logo}>
+        <NavLink
+          to="/dashboard"
+          className={styles.logo}        >
           <span> ▣ </span>
-          <strong>EstacioneJá</strong>
-            <link rel="stylesheet" href="/dashboard" />
-        </div>
+          <strong>EstacioneJá </strong>
+        </NavLink>
 
         <nav className={styles.nav}>
           {menuItems.map((item) => (
