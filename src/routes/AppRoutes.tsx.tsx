@@ -10,6 +10,7 @@ import { VehicleCategoriesPage } from "../../src/features/auth/pages/VehicleCate
 import { DashboardLayout } from "../layouts/DashboardLayout";
 import { PricingRulesPage } from "../features/auth/pages/PricingRulesPage";
 import { ClientPage } from "../features/auth/pages/client";
+import { ParkingSpotsPage } from "../features/auth/pages/ParkingSpotsPage/ParkingSpotsPage";
 
 export function AppRoutes() {
   return (
@@ -33,7 +34,7 @@ export function AppRoutes() {
           />
 
           <Route path="/estacionamento" element={<h1>Estacionamento</h1>} />
-          <Route path="/vagas" element={<h1>Vagas</h1>} />
+          <Route path="/vagas" element={<ParkingSpotsPage />} />
           <Route path="/regras-cobranca" element={<PricingRulesPage />} />
           <Route path="/tickets" element={<h1>Tickets</h1>} />
           <Route path="/relatorios" element={<h1>Relatórios</h1>} />

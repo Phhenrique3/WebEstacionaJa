@@ -1,0 +1,1 @@
+export { ParkingSpotsPage } from "./ParkingSpotsPage";

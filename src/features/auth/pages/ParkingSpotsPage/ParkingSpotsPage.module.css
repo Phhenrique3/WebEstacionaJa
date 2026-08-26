@@ -22,6 +22,36 @@
   font-size: 15px;
 }
 
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.summaryCard {
+  min-height: 110px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.summaryCard span {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.summaryCard strong {
+  color: #111827;
+  font-size: 30px;
+  font-weight: 800;
+}
+
 .searchBox {
   width: 100%;
   height: 64px;
@@ -55,7 +85,7 @@
 
 .tableCard {
   width: 100%;
-  min-height: 620px;
+  min-height: 560px;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 18px;
@@ -88,27 +118,27 @@
   border-bottom: 0;
 }
 
-.statusActive {
-  color: #16a34a;
+.statusAvailable,
+.statusOccupied,
+.statusReserved,
+.statusInactive {
   font-weight: 800;
+}
+
+.statusAvailable {
+  color: #16a34a;
+}
+
+.statusOccupied {
+  color: #dc2626;
+}
+
+.statusReserved {
+  color: #d97706;
 }
 
 .statusInactive {
-  color: #dc2626;
-  font-weight: 800;
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.actions button {
-  border: 0;
-  background: transparent;
-  font-size: 18px;
-  cursor: pointer;
+  color: #6b7280;
 }
 
 .emptyMessage,
@@ -182,48 +212,12 @@
   gap: 22px;
 }
 
-.formGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.formGroup label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #6b7280;
-}
-
-.formGroup select {
-  width: 100%;
-  height: 55px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 0 18px;
-  font-size: 15px;
-  color: #111827;
-  outline: none;
-  background: #ffffff;
-}
-
-.formGroup select:focus {
-  border-color: #4f35d9;
-  box-shadow: 0 0 0 4px rgba(79, 53, 217, 0.12);
-}
-
 .modalActions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   margin-top: 8px;
 }
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 
 @media (max-width: 900px) {
   .header {
@@ -232,11 +226,15 @@
     gap: 16px;
   }
 
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+
   .tableCard {
     overflow-x: auto;
   }
 
   .table {
-    min-width: 850px;
+    min-width: 700px;
   }
 }
