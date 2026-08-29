@@ -8,12 +8,15 @@ import { Input } from "../../../../components/ui/Input";
 import {
   createParkingSpot,
   getParkingSpots,
+  UpdateParking,
 } from "../../services/parkingSpotService";
 
 import type {
   ParkingSpot,
   ParkingSpotStatus,
 } from "../../types/parkingSpotTypes";
+
+type ModalMode = "create" | "edit";
 
 import styles from "./ParkingSpotsPage.module.css";
 
@@ -27,6 +30,8 @@ export function ParkingSpotsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<ModalMode>("create");
+  const [selectedSpotId, setSelectedSpotId] = useState<string | null>(null);
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -61,21 +66,15 @@ export function ParkingSpotsPage() {
     loadSpots();
   }, []);
 
-  function openCreateModal() {
-    setNumero("");
-    setPatio("");
-    setErrorMessage("");
-    setIsModalOpen(true);
-  }
-
   function closeModal() {
     setIsModalOpen(false);
+    setSelectedSpotId(null);
     setNumero("");
     setPatio("");
     setErrorMessage("");
   }
 
-  async function handleCreateSpot(event: FormEvent<HTMLFormElement>) {
+  async function handleSaveSpot(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setErrorMessage("");
@@ -88,23 +87,34 @@ export function ParkingSpotsPage() {
     try {
       setIsSaving(true);
 
-      await createParkingSpot({
-        numero,
-        patio: patio || undefined,
-      });
+      if (modalMode === "edit" && selectedSpotId) {
+        await UpdateParking(selectedSpotId, {
+          numero,
+          patio: patio || undefined,
+        });
+      } else {
+        await createParkingSpot({
+          numero,
+          patio: patio || undefined,
+        });
+      }
 
       closeModal();
-
       await loadSpots();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const responseData = error.response?.data as { message?: string };
 
-        setErrorMessage(responseData?.message || "Erro ao criar vaga.");
+        const defaultMessage =
+          modalMode === "edit" ? "Erro ao atualizar vaga." : "Erro ao criar vaga.";
+
+        setErrorMessage(responseData?.message || defaultMessage);
         return;
       }
 
-      setErrorMessage("Erro inesperado ao criar vaga.");
+      setErrorMessage(
+        modalMode === "edit" ? "Erro inesperado ao atualizar vaga." : "Erro inesperado ao criar vaga.",
+      );
     } finally {
       setIsSaving(false);
     }
@@ -121,6 +131,22 @@ export function ParkingSpotsPage() {
     return labels[status] || status;
   }
 
+  function resetForm() {
+    setNumero("")
+    setPatio("")
+  }
+  function openCreateModal() {
+    resetForm();
+    setModalMode("create");
+    setIsModalOpen(true);
+  }
+  function openEditModal(spot: ParkingSpot) {
+    setSelectedSpotId(spot.id);
+    setNumero(spot.numero);
+    setPatio(spot.patio ?? "");
+    setModalMode("edit");
+    setIsModalOpen(true);
+  }
   function getStatusClass(status: ParkingSpotStatus) {
     const statusClasses = {
       DISPONIVEL: styles.statusAvailable,
@@ -213,11 +239,22 @@ export function ParkingSpotsPage() {
                     </span>
                   </td>
                   <td>
-                    {new Date(spot.createdAt).toLocaleDateString("pt-BR")}
+                    <div className={styles.tableCellActions}>
+                      <span>{new Date(spot.createdAt).toLocaleDateString("pt-BR")}</span>
+
+                      <button
+                        className={styles.editButton}
+                        type="button"
+                        onClick={() => openEditModal(spot)}
+                        title="Editar vaga"
+                        aria-label={`Editar vaga ${spot.numero}`}
+                      >
+                        ✎
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
-
               {filteredSpots.length === 0 && (
                 <tr>
                   <td colSpan={4} className={styles.emptyMessage}>
@@ -235,16 +272,20 @@ export function ParkingSpotsPage() {
           <div className={styles.modal}>
             <header className={styles.modalHeader}>
               <div>
-                <h2>Nova Vaga</h2>
-                <p>Cadastre uma vaga para o estacionamento.</p>
+                <h2>{modalMode === "edit" ? "Editar vaga" : "Nova Vaga"}</h2>
+                <p>
+                  {modalMode === "edit"
+                    ? "Atualize os dados da vaga selecionada."
+                    : "Cadastre uma vaga para o estacionamento."}
+                </p>
               </div>
 
-              <button type="button" onClick={closeModal}>
+              <button type="button" onClick={closeModal} aria-label="Fechar modal">
                 ×
               </button>
             </header>
 
-            <form onSubmit={handleCreateSpot} className={styles.form}>
+            <form onSubmit={handleSaveSpot} className={styles.form}>
               <Input
                 label="Número da vaga"
                 name="numero"
@@ -269,7 +310,13 @@ export function ParkingSpotsPage() {
                 </Button>
 
                 <Button type="submit" disabled={isSaving}>
-                  {isSaving ? "Salvando..." : "Salvar"}
+                  {isSaving
+                    ? modalMode === "edit"
+                      ? "Salvando alterações..."
+                      : "Salvando..."
+                    : modalMode === "edit"
+                      ? "Salvar alterações"
+                      : "Salvar"}
                 </Button>
               </div>
             </form>

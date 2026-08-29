@@ -2,6 +2,7 @@ import { api } from "../services/api";
 import type {
   CreateParkingSpotRequest,
   ParkingSpot,
+  UpdateParkingSpotRequest,
 } from "../types/parkingSpotTypes";
 
 export async function getParkingSpots(): Promise<ParkingSpot[]> {
@@ -10,8 +11,17 @@ export async function getParkingSpots(): Promise<ParkingSpot[]> {
   return response.data;
 }
 
+export async function UpdateParking(
+  id: string,
+  data: UpdateParkingSpotRequest,
+): Promise<ParkingSpot> {
+  const response = await api.patch<ParkingSpot>(`/parking-spots/${id}`, data);
+
+  return response.data;
+}
+
 export async function createParkingSpot(
-  data: CreateParkingSpotRequest
+  data: CreateParkingSpotRequest,
 ): Promise<ParkingSpot> {
   const response = await api.post<ParkingSpot>("/parking-spots", data);
 

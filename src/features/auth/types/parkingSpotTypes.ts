@@ -17,3 +17,8 @@ export type CreateParkingSpotRequest = {
   numero: string;
   patio?: string;
 };
+
+export type UpdateParkingSpotRequest = {
+  numero: string,
+  patio?: string
+};

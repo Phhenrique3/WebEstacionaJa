@@ -261,7 +261,7 @@ export function VehicleCategoriesPage() {
                       </button>
                     </div>
                   </td>
-                </tr>
+                </  tr>
               ))}
 
               {filteredCategories.length === 0 && (
