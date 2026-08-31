@@ -16,6 +16,20 @@
   color: #111827;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+.actions button {
+  border: 0;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+  
+}
 .header p {
   margin: 8px 0 0;
   font-size: 15px;

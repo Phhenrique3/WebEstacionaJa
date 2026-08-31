@@ -8,6 +8,7 @@ import { Input } from "../../../../components/ui/Input";
 import {
   createParkingSpot,
   getParkingSpots,
+  DeleteSpot,
   UpdateParking,
 } from "../../services/parkingSpotService";
 
@@ -158,6 +159,31 @@ export function ParkingSpotsPage() {
     return statusClasses[status] || styles.statusInactive;
   }
 
+  async function handleDeleteStop(spot: ParkingSpot) {
+    const confirmDelete = window.confirm(
+      `Deseja realmente remover a vaga ${spot.numero}?`,
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      setErrorMessage("");
+      await DeleteSpot(spot.id);
+
+      setSpots((current) => current.filter((item) => item.id !== spot.id));
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data as { message?: string };
+        setErrorMessage(responseData?.message || "Erro ao remover vaga.");
+        return;
+      }
+
+      setErrorMessage("Erro inesperado ao remover vaga.");
+    }
+  }
+
   return (
     <section className={styles.page}>
       <header className={styles.header}>
@@ -242,15 +268,28 @@ export function ParkingSpotsPage() {
                     <div className={styles.tableCellActions}>
                       <span>{new Date(spot.createdAt).toLocaleDateString("pt-BR")}</span>
 
-                      <button
-                        className={styles.editButton}
-                        type="button"
-                        onClick={() => openEditModal(spot)}
-                        title="Editar vaga"
-                        aria-label={`Editar vaga ${spot.numero}`}
-                      >
-                        ✎
-                      </button>
+
+                      <div className={styles.actions}>
+                        <button
+                          type="button"
+                          onClick={() => openEditModal(spot)}
+                          title="Editar vaga"
+                          aria-label={`Editar vaga ${spot.numero}`}
+                        >
+                          ✎
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteStop(spot)}
+                          title="Excluir vaga"
+                          aria-label={`Excluir vaga ${spot.numero}`}
+                        >
+                          🗑
+                        </button>
+
+                      </div>
+
                     </div>
                   </td>
                 </tr>
