@@ -7,7 +7,6 @@ import { Input } from "../../../../components/ui/Input";
 
 import {
   createVehicleCategory,
-  deleteVehicleCategory,
   getVehicleCategories,
   updateVehicleCategory,
 } from "../../services/vehicleCategoryService";
@@ -152,38 +151,6 @@ export function VehicleCategoriesPage() {
     }
   }
 
-  async function handleDeleteCategory(categoryId: string) {
-    const confirmDelete = window.confirm(
-      "Deseja realmente remover esta categoria de veículo?"
-    );
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    try {
-      setErrorMessage("");
-
-      await deleteVehicleCategory(categoryId);
-
-      setCategories((currentCategories) =>
-        currentCategories.filter((category) => category.id !== categoryId)
-      );
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const responseData = error.response?.data as { message?: string };
-
-        setErrorMessage(
-          responseData?.message || "Erro ao remover categoria de veículo."
-        );
-
-        return;
-      }
-
-      setErrorMessage("Erro inesperado ao remover categoria.");
-    }
-  }
-
   return (
     <section className={styles.page}>
       <header className={styles.header}>
@@ -250,14 +217,6 @@ export function VehicleCategoriesPage() {
                         title="Editar categoria"
                       >
                         ✎
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteCategory(category.id)}
-                        title="Excluir categoria"
-                      >
-                        🗑
                       </button>
                     </div>
                   </td>

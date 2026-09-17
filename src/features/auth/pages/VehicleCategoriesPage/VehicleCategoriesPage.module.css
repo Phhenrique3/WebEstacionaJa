@@ -16,6 +16,26 @@
   color: #111827;
 }
 
+.statusActive {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.statusInactive {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
 .header p {
   margin: 8px 0 0;
   color: #6b7280;
@@ -110,7 +130,7 @@
   background: transparent;
   font-size: 18px;
   cursor: pointer;
-  
+
 }
 
 .emptyMessage,
@@ -187,10 +207,11 @@
     display: flex;
     gap: 30px;
   }
-    .formGroup select {
-      font-size: 14px;
-    }
-    
+
+  .formGroup select {
+    font-size: 14px;
+  }
+
 }
 
 .form Input {
