@@ -10,14 +10,14 @@ type ReportItem = {
     actionLabel: string;
     icon: string;
     type: "clients";
-    
+
 };
 
 const reportsList: ReportItem[] = [
     {
         id: "clients-report",
         title: "Relatório de clientes",
-        description: "Extrai um relatório em PDF com os clientes cadastrados.",
+        description: "relatório de clientes cadastrados.",
         actionLabel: "Extrair relatório",
         type: "clients",
         icon: "bi bi-journal-arrow-up",
@@ -107,7 +107,7 @@ export function ReportsPage() {
                                 </div>
 
                                 <Button
-                                    title="Extrai um relatório em PDF com os clientes cadastrados"
+                                    title="Relatório de clientes cadastrados."
                                     type="button"
                                     onClick={() => handleGenerateReport(report.type)}
                                     disabled={isLoadingReport}
