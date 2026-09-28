@@ -6,7 +6,6 @@ import { Button } from "../../../../components/ui/Button";
 import { Input } from "../../../../components/ui/Input";
 import {
   createClient,
-  deleteClient,
   getClients,
   updateClient,
 } from "../../services/clientService";
@@ -180,39 +179,6 @@ export function ClientPage() {
       }
     } finally {
       setIsSaving(false);
-    }
-  }
-
-  async function handleDelete(client: Client) {
-    if (!window.confirm(`Deseja realmente desativar o cliente ${client.name}?`)) {
-      return;
-    }
-
-    try {
-      setErrorMessage("");
-
-      await deleteClient(client.id);
-
-      setClients((current) =>
-        current.map((item) =>
-          item.id === client.id ? { ...item, active: false } : item
-        )
-      );
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const responseData = error.response?.data as {
-          message?: string;
-          mensagem?: string;
-        };
-
-        setErrorMessage(
-          responseData?.mensagem ||
-          responseData?.message ||
-          "Erro ao desativar cliente."
-        );
-      } else {
-        setErrorMessage("Erro inesperado ao desativar cliente.");
-      }
     }
   }
 
