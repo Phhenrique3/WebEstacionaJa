@@ -10,6 +10,7 @@ import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute";
 import { LoginPage } from "../features/auth/pages/LoginPage";
 import { ForgotPasswordPage } from "../features/auth/pages/ForgotPasswordPage";
 import { ResetPasswordPage } from "../features/auth/pages/ResetPasswordPage";
+import { ParkingSessionsPage } from "../features/auth/pages/parkingSessionsPage";
 
 import { DashboardPage } from "../features/dashboard/pages/DashboardPage";
 import { VehicleCategoriesPage } from "../features/auth/pages/VehicleCategoriesPage";
@@ -61,7 +62,7 @@ export function AppRoutes() {
 
             <Route
               path="/estacionamento"
-              element={<h1>Estacionamento</h1>}
+              element={<ParkingSessionsPage />}
             />
 
             <Route

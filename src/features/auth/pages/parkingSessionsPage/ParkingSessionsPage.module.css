@@ -1,0 +1,200 @@
+.page {
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.header p {
+  margin: 8px 0 0;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.summaryCard {
+  min-height: 110px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.summaryCard span {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.summaryCard strong {
+  color: #111827;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.searchBox {
+  width: 100%;
+  height: 64px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  margin-bottom: 28px;
+}
+
+.searchBox span {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.searchBox input {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: none;
+  font-size: 16px;
+  color: #111827;
+  background: transparent;
+}
+
+.searchBox input::placeholder {
+  color: #9ca3af;
+}
+
+.tableCard {
+  width: 100%;
+  min-height: 560px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 28px;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+}
+
+.table th {
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: left;
+  padding: 14px 8px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table td {
+  color: #111827;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 22px 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+.statusOpened,
+.statusClosed,
+.statusCanceled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.statusOpened {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.statusClosed {
+  color: #4338ca;
+  background: #eef2ff;
+}
+
+.statusCanceled {
+  color: #dc2626;
+  background: #fee2e2;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.actions button {
+  border: 0;
+  background: transparent;
+  color: #4f35d9;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.emptyMessage,
+.loadingText {
+  text-align: center;
+  color: #6b7280;
+  padding: 40px 0;
+}
+
+.errorMessage {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+}
