@@ -38,9 +38,9 @@ const menuItems = [
     icon: "bi bi-cash-coin",
   },
   {
-    label: "Tickets",
-    path: "/tickets",
-    icon: "bi bi-ticket-perforated",
+    label: "Veiclos",
+    path: "/veiculos",
+    icon: "bi bi-car-front",
   },
   {
     label: "Relatórios",

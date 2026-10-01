@@ -1,0 +1,415 @@
+.page {
+    width: 100%;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.header p {
+    margin: 8px 0 0;
+    color: #6b7280;
+    font-size: 15px;
+}
+
+.selectGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    
+}
+
+.actions button {
+    border: 0;
+    background: transparent;
+    font-size: 18px;
+    cursor: pointer;
+
+}
+
+.selectGroup label {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.selectGroup select {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 0 14px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 14px;
+    outline: none;
+}
+
+.selectGroup select:focus {
+    border-color: #4f35d9;
+    box-shadow: 0 0 0 4px rgba(79, 53, 217, 0.12);
+}
+
+.selectSearchInput {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 0 14px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 14px;
+    outline: none;
+}
+
+.selectSearchInput::placeholder {
+    color: #9ca3af;
+}
+
+.selectSearchInput:focus {
+    border-color: #4f35d9;
+    box-shadow: 0 0 0 4px rgba(79, 53, 217, 0.12);
+}
+
+.selectHelpText {
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.summaryGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.selectSearchInput {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 0 14px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 14px;
+    outline: none;
+}
+
+.selectSearchInput::placeholder {
+    color: #9ca3af;
+}
+
+.selectSearchInput:focus {
+    border-color: #4f35d9;
+    box-shadow: 0 0 0 4px rgba(79, 53, 217, 0.12);
+}
+
+.selectHelpText {
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.selectGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.selectGroup label {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.selectGroup select {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 0 14px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 14px;
+    outline: none;
+}
+
+.selectGroup select:focus {
+    border-color: #4f35d9;
+    box-shadow: 0 0 0 4px rgba(79, 53, 217, 0.12);
+}
+
+.summaryCard {
+    min-height: 110px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.summaryCard span {
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.summaryCard strong {
+    color: #111827;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.searchBox {
+    width: 100%;
+    height: 64px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    margin-bottom: 28px;
+}
+
+.searchBox span {
+    font-size: 20px;
+    margin-right: 8px;
+}
+
+.searchBox input {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    outline: none;
+    font-size: 16px;
+    color: #111827;
+    background: transparent;
+}
+
+.searchBox input::placeholder {
+    color: #9ca3af;
+}
+
+.errorMessage {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+.formCard {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 28px;
+}
+
+.formHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 28px;
+}
+
+.formHeader h2 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.formHeader p {
+    margin: 8px 0 0;
+    color: #6b7280;
+    font-size: 15px;
+}
+
+.formHeader button {
+    border: 0;
+    background: transparent;
+    color: #6b7280;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.previewBox {
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    background: #f9fafb;
+    padding: 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.5fr;
+    gap: 20px;
+}
+
+.previewBox strong {
+    grid-column: 1 / -1;
+    color: #111827;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.previewBox span {
+    display: block;
+    margin-bottom: 6px;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.previewBox p {
+    margin: 0;
+    color: #111827;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.previewBox code {
+    display: block;
+    color: #4f35d9;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5;
+    white-space: normal;
+}
+
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.tableCard {
+    width: 100%;
+    min-height: 560px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 28px;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+}
+
+.table th {
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: left;
+    padding: 14px 8px 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table td {
+    color: #111827;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 22px 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.table tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table tr:last-child td {
+    border-bottom: 0;
+}
+
+.statusActive {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    color: #15803d;
+    background: #dcfce7;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.emptyMessage,
+.loadingText {
+    text-align: center;
+    color: #6b7280;
+    padding: 40px 0;
+}
+
+@media (max-width: 1000px) {
+    .summaryGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .previewBox {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .summaryGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .formActions {
+        flex-direction: column-reverse;
+    }
+
+    .formActions button {
+        width: 100%;
+    }
+}

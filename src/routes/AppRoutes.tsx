@@ -11,7 +11,7 @@ import { LoginPage } from "../features/auth/pages/LoginPage";
 import { ForgotPasswordPage } from "../features/auth/pages/ForgotPasswordPage";
 import { ResetPasswordPage } from "../features/auth/pages/ResetPasswordPage";
 import { ParkingSessionsPage } from "../features/auth/pages/parkingSessionsPage";
-
+import { VehiclesPage } from "../features/auth/pages/VehiclePage"
 import { DashboardPage } from "../features/dashboard/pages/DashboardPage";
 import { VehicleCategoriesPage } from "../features/auth/pages/VehicleCategoriesPage";
 import { PricingRulesPage } from "../features/auth/pages/PricingRulesPage";
@@ -50,10 +50,6 @@ export function AppRoutes() {
 
             <Route path="/clientes" element={<ClientPage />} />
 
-            <Route
-              path="/veiculos"
-              element={<h1>Veículos</h1>}
-            />
 
             <Route
               path="/categorias-veiculos"
@@ -76,8 +72,8 @@ export function AppRoutes() {
             />
 
             <Route
-              path="/tickets"
-              element={<h1>Tickets</h1>}
+              path="/veiculos"
+              element={<VehiclesPage />}
             />
 
             <Route
