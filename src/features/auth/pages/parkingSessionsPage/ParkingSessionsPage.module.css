@@ -198,3 +198,127 @@
     grid-template-columns: 1fr;
   }
 }
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 20;
+}
+
+.modal {
+  width: 100%;
+  max-width: 620px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 22px;
+  background: #ffffff;
+  padding: 32px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 26px;
+  color: #111827;
+}
+
+.modalHeader p {
+  margin: 8px 0 0;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.modalHeader button {
+  border: 0;
+  background: transparent;
+  font-size: 30px;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.formGroup label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.formGroup select,
+.searchInput {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 0 14px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 14px;
+  outline: none;
+}
+
+.formGroup select:focus,
+.searchInput:focus {
+  border-color: #4f35d9;
+  box-shadow: 0 0 0 4px rgba(79, 53, 217, 0.12);
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.formGroup small {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.summaryBox {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #f9fafb;
+  padding: 18px;
+}
+
+.summaryBox strong {
+  display: block;
+  color: #111827;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.summaryBox p {
+  margin: 4px 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}

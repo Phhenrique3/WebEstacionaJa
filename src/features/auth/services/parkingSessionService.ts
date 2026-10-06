@@ -5,7 +5,6 @@ import type {
   CreateParkingSessionRequest,
   ParkingSession,
 } from "../types/parkingSession.types";
-import { data } from "react-router-dom";
 
 export async function getParkingSessions(): Promise<ParkingSession[]> {
   const response = await api.get<ParkingSession[]>("/parking-sessions");
