@@ -1,18 +1,21 @@
-
-
-
 .sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
   width: 250px;
-  min-height: 100vh;
+  height: 100vh;
+  box-sizing: border-box;
   background: #261b73;
   color: #ffffff;
   padding: 22px 18px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow-y: auto;
+  z-index: 1000;
   transition:
     width 0.25s ease,
     padding 0.25s ease;
+
 }
 
 .sidebarCollapsed {
@@ -33,11 +36,13 @@
   gap: 8px;
   min-width: 0;
 }
+
 .logoIcon {
   font-size: 18px;
   flex-shrink: 0;
   line-height: 1;
 }
+
 .logo strong {
   font-size: 18px;
   font-weight: 800;
