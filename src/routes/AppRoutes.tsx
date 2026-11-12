@@ -18,6 +18,7 @@ import { PricingRulesPage } from "../features/auth/pages/PricingRulesPage";
 import { ClientPage } from "../features/auth/pages/client";
 import { ParkingSpotsPage } from "../features/auth/pages/ParkingSpotsPage/ParkingSpotsPage";
 import { ReportsPage } from "../features/auth/pages/ReportsPage/ReportsPage";
+import { DashboardOverviewPage } from "../features/dashboard/pages/DashboardOverviewPage/DashboardOverviewPage"
 
 import { DashboardLayout } from "../layouts/DashboardLayout";
 
@@ -42,12 +43,15 @@ export function AppRoutes() {
 
         {/* Rotas protegidas */}
         <Route element={<ProtectedRoute />}>
-          <Route element={<DashboardLayout />}>
-            <Route
-              path="/dashboard"
-              element={<DashboardPage />}
-            />
 
+
+          <Route element={<DashboardLayout />}>
+
+
+            <Route path="/dashboard" element={<DashboardPage />}>
+              <Route index element={<DashboardOverviewPage />} />
+            </Route>
+            
             <Route path="/clientes" element={<ClientPage />} />
 
 

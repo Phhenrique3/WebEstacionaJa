@@ -1,10 +1,8 @@
-
+import { DashboardOverviewPage } from "../DashboardOverviewPage/DashboardOverviewPage"
 export function DashboardPage() {
   return (
     <main>
-      <h1>
-        <span>Dashboard</span>
-      </h1>
+      <DashboardOverviewPage />
     </main>
   );
 }
