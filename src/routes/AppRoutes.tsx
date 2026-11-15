@@ -51,7 +51,7 @@ export function AppRoutes() {
             <Route path="/dashboard" element={<DashboardPage />}>
               <Route index element={<DashboardOverviewPage />} />
             </Route>
-            
+
             <Route path="/clientes" element={<ClientPage />} />
 
 

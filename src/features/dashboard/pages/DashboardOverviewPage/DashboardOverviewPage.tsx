@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { getParkingSessions } from "../../../auth/services/parkingSessionService";
 import type { ParkingSession } from "../../../auth/types/parkingSession.types";
+import { DashboardStatCard } from "../../../../components/DashboardStatCard/DashboardStatCard"
 
 import styles from "./DashboardOverviewPage.module.css"
 
@@ -41,7 +42,7 @@ export function DashboardOverviewPage() {
         loadDashboard()
     }, [])
 
-
+    // filtro do mes 
     const filteredSessions = useMemo(() => {
         return sessions.filter((session) => {
             const entryDate = new Date(session.entrada);
@@ -62,9 +63,40 @@ export function DashboardOverviewPage() {
         });
     }, [sessions, selectedMonth]);
 
+
+    // faturamento
+
+    const faturamento = sessions
+        .filter((session) => {
+            if (session.status !== "FECHADO" || !session.saida) {
+                return false
+            }
+
+            const dataSaida = new Date(session.saida)
+
+            const ano = dataSaida.getFullYear()
+            const mes = String(dataSaida.getMonth() + 1).padStart(2, "0")
+
+
+            return `${ano}-${mes}` === selectedMonth;
+
+        })
+
+        .reduce((total, session) => {
+            return total + Number(session.valor_total ?? 0);
+        }, 0);
+
+    const faturamentoFormatado = new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+    }).format(faturamento / 100);
+
+
     const openedSessions = filteredSessions.filter(
         (session) => session.status === "ABERTO"
     );
+
+
 
     const closedSessions = filteredSessions.filter(
         (session) => session.status === "FECHADO"
@@ -101,25 +133,29 @@ export function DashboardOverviewPage() {
 
             {!isLoading && !errorMessage && (
                 <div className={styles.cards}>
-                    <div className={styles.card}>
-                        <span>Entradas no mês</span>
-                        <strong>{filteredSessions.length}</strong>
-                    </div>
+                    <DashboardStatCard
+                        title="Entradas no mês"
+                        value={filteredSessions.length}
+                    />
 
-                    <div className={styles.card}>
-                        <span>Sessões abertas</span>
-                        <strong>{openedSessions.length}</strong>
-                    </div>
+                    <DashboardStatCard
+                        title="Sessões abertas"
+                        value={openedSessions.length}
+                    />
 
-                    <div className={styles.card}>
-                        <span>Sessões fechadas</span>
-                        <strong>{closedSessions.length}</strong>
-                    </div>
+                    <DashboardStatCard
+                        title="Sessões fechadas"
+                        value={closedSessions.length}
+                    />
+                    <DashboardStatCard
+                        title="Sessões cancelada"
+                        value={canceledSessions.length}
+                    />
+                    <DashboardStatCard
+                        title="Valor total"
+                        value={faturamentoFormatado}
+                    />
 
-                    <div className={styles.card}>
-                        <span>Sessões canceladas</span>
-                        <strong>{canceledSessions.length}</strong>
-                    </div>
                 </div>
             )}
         </section>

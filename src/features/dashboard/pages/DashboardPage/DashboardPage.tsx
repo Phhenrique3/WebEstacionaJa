@@ -1,8 +1,8 @@
-import { DashboardOverviewPage } from "../DashboardOverviewPage/DashboardOverviewPage"
+import {DashboardOverviewPage} from "../DashboardOverviewPage/DashboardOverviewPage"
 export function DashboardPage() {
   return (
     <main>
-      <DashboardOverviewPage />
+      <DashboardOverviewPage/>
     </main>
   );
 }
