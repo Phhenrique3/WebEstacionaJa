@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 
 import axios from "axios";
-
 import { Button } from "../../../../components/ui/Button";
+import { CancelParkingModal } from "../../../../components/cancel/CancelParkingModal"
 
 import {
     cancelParkingSession,
@@ -18,6 +18,15 @@ import type {
     ParkingSessionChargeType
 } from "../../types/parkingSession.types";
 
+
+import {
+    PaymentModal,
+    type ParkingSessionForPayment,
+} from "../../../../components/parking/PaymentModal/PaymentModal";
+
+import { createPayment } from "../../services/paymentService";
+
+import type { MetodoPagamento } from "../../types/payment.types";
 
 
 
@@ -42,6 +51,8 @@ export function ParkingSessionsPage() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [isCreatingSession, setIsCreatingSession] = useState(false)
 
+    const [selectedPaymentSession, setSelectedPaymentSession] =
+        useState<ParkingSessionForPayment | null>(null);
 
     const [vehicleId, setVehicleId] = useState("")
     const [parkingSpotId, setParkingSpotId] = useState("")
@@ -51,7 +62,8 @@ export function ParkingSessionsPage() {
     const [vehicleSearch, setVehicleSearch] = useState("")
     const [spotSearch, setSpotSearch] = useState("");
 
-
+    const [selectedCancelSession, setSelectedCancelSession] =
+        useState<ParkingSession | null>(null);
 
 
     const [isLoading, setIsLoading] = useState(false);
@@ -187,60 +199,41 @@ export function ParkingSessionsPage() {
     }, []);
 
     /** Confirma e encerra uma sessão aberta, recarregando a tabela ao concluir. */
-    async function handleCloseSession(sessionId: string) {
-        const confirmClose = window.confirm("Deseja realmente fechar esta sessão?");
-
-        if (!confirmClose) {
-            return;
+    async function handleCloseSession(
+        sessionId: string
+    ): Promise<ParkingSessionForPayment> {
+        if (
+            !selectedPaymentSession ||
+            selectedPaymentSession.id !== sessionId
+        ) {
+            throw new Error("Sessão não selecionada.");
         }
 
-        try {
-            setIsActionLoading(true);
-            setErrorMessage("");
+        const closedSession = await closeParkingSession(sessionId);
 
-            await closeParkingSession(sessionId);
-
-            await loadSessions();
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const responseData = error.response?.data as { message?: string };
-
-                setErrorMessage(responseData?.message || "Erro ao fechar sessão.");
-                return;
-            }
-
-            setErrorMessage("Erro inesperado ao fechar sessão.");
-        } finally {
-            setIsActionLoading(false);
+        if (!closedSession || closedSession.status !== "FECHADO") {
+            throw new Error(
+                "Não foi possível confirmar o fechamento da sessão."
+            );
         }
+
+        return {
+            ...selectedPaymentSession,
+            ...closedSession,
+            vehicle: selectedPaymentSession.vehicle,
+        };
     }
-
-    /** Confirma e cancela uma sessão aberta, recarregando a tabela ao concluir. */
+    //Confirma e cancela uma sessão aberta
     async function handleCancelSession(sessionId: string) {
-        const confirmCancel = window.confirm(
-            "Deseja realmente cancelar esta sessão?"
-        );
-
-        if (!confirmCancel) {
-            return;
-        }
-
         try {
             setIsActionLoading(true);
             setErrorMessage("");
 
             await cancelParkingSession(sessionId);
 
+            setSelectedCancelSession(null);
+
             await loadSessions();
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const responseData = error.response?.data as { message?: string };
-
-                setErrorMessage(responseData?.message || "Erro ao cancelar sessão.");
-                return;
-            }
-
-            setErrorMessage("Erro inesperado ao cancelar sessão.");
         } finally {
             setIsActionLoading(false);
         }
@@ -253,6 +246,18 @@ export function ParkingSessionsPage() {
 
         await loadCreateModalData()
         setIsCreateModalOpen(true)
+    }
+
+    // pagamento 
+
+    async function handleConfirmPayment(
+        sessionId: string,
+        metodo: MetodoPagamento
+    ) {
+        await createPayment({
+            parkingSessionId: sessionId,
+            metodo_pagamento: metodo,
+        });
     }
 
     /** Fecha o modal e restaura o formulário ao estado inicial. */
@@ -396,6 +401,29 @@ export function ParkingSessionsPage() {
 
     }
 
+    function handleOpenPaymentModal(session: ParkingSession) {
+        if (!session.vehicle) {
+            setErrorMessage("Veículo da sessão não encontrado.");
+            return;
+        }
+
+        setErrorMessage("");
+
+        setSelectedPaymentSession({
+            id: session.id,
+            status: session.status,
+            entrada: session.entrada,
+            saida: session.saida,
+            valor_total: session.valor_total,
+            tempo_total_minutos: session.tempo_total_minutos,
+            vehicle: {
+                placa: session.vehicle.placa,
+                marca: session.vehicle.marca,
+                modelo: session.vehicle.modelo,
+            },
+        });
+    }
+
 
 
 
@@ -509,7 +537,7 @@ export function ParkingSessionsPage() {
                                                 <>
                                                     <button
                                                         type="button"
-                                                        onClick={() => handleCloseSession(session.id)}
+                                                        onClick={() => handleOpenPaymentModal(session)}
                                                         disabled={isActionLoading}
                                                     >
                                                         Fechar
@@ -517,7 +545,7 @@ export function ParkingSessionsPage() {
 
                                                     <button
                                                         type="button"
-                                                        onClick={() => handleCancelSession(session.id)}
+                                                        onClick={() => setSelectedCancelSession(session)}
                                                         disabled={isActionLoading}
                                                     >
                                                         Cancelar
@@ -681,6 +709,31 @@ export function ParkingSessionsPage() {
                         </form>
                     </div>
                 </div>
+            )}
+            {selectedPaymentSession && (
+                <PaymentModal
+                    key={selectedPaymentSession.id}
+                    session={selectedPaymentSession}
+                    onClose={() => {
+                        setSelectedPaymentSession(null);
+                        void loadSessions();
+                    }}
+                    onCloseSession={handleCloseSession}
+                    onConfirmPayment={handleConfirmPayment}
+                    onSuccess={async () => {
+                        await loadSessions();
+                        setSelectedPaymentSession(null);
+                    }}
+                />
+            )}
+
+            {selectedCancelSession && (
+                <CancelParkingModal
+                    key={selectedCancelSession.id}
+                    session={selectedCancelSession}
+                    onClose={() => setSelectedCancelSession(null)}
+                    onConfirm={handleCancelSession}
+                />
             )}
         </section>
     );
