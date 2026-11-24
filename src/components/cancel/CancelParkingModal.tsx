@@ -41,6 +41,8 @@ export function CancelParkingModal({
 
         <p>Placa: {session.vehicle?.placa ?? "-"}</p>
 
+        <p> Entrada: {session.entrada} </p>
+
         <p>Cliente: {session.vehicle?.client?.name ?? "-"}</p>
 
         <p>Vaga: {session.parkingSpot?.numero ?? "-"}</p>
