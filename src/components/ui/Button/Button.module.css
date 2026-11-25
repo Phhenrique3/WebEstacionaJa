@@ -1,8 +1,9 @@
 .button {
-  height: 52px;
+  min-height: 52px;
+  max-width: 100%;
   border: 0;
   border-radius: var(--radius-input);
-  padding: 0 20px;
+  padding: 8px 20px;
   font-size: 15px;
   font-weight: 800;
   cursor: pointer;
@@ -35,7 +36,7 @@
 .ghost {
   background: transparent;
   color: var(--color-primary);
-  height: auto;
+  min-height: 0;
   padding: 0;
   border-radius: 0;
   box-shadow: none;

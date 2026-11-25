@@ -1,15 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardStatCard } from "../../../../components/DashboardStatCard/DashboardStatCard";
-import { getParkingSessions } from "../../../auth/services/parkingSessionService";
-import type { ParkingSession } from "../../../auth/types/parkingSession.types";
-import { localDateKey, summarizePeriod, type Period } from "./dashboardPeriod";
+import { getParkingTotals, type ParkingTotals } from "../../../auth/services/parkingSessionService";
+import { localDateKey, periodRange, type Period } from "./dashboardPeriod";
 import styles from "./DashboardOverviewPage.module.css";
 
 const labels = { day: "Dia", month: "Mês", year: "Ano" };
 const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 export function DashboardOverviewPage() {
-  const [sessions, setSessions] = useState<ParkingSession[]>([]);
+  const [totals, setTotals] = useState<ParkingTotals | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [period, setPeriod] = useState<Period>("month");
@@ -19,16 +18,18 @@ export function DashboardOverviewPage() {
   });
   const value = dates[period];
   const valid = period === "year" ? /^[1-9]\d{3}$/.test(value) : Boolean(value);
-  const totals = useMemo(() => summarizePeriod(sessions, period, value), [sessions, period, value]);
-
   useEffect(() => {
+    if (!valid) { setErrorMessage(""); setIsLoading(false); return; }
+    const controller = new AbortController();
+    setErrorMessage("");
+    setIsLoading(true);
     let active = true;
-    getParkingSessions()
-      .then((data) => { if (active) setSessions(data); })
+    getParkingTotals(periodRange(period, value), controller.signal)
+      .then((data) => { if (active) setTotals(data); })
       .catch(() => { if (active) setErrorMessage("Erro ao carregar os dados do dashboard."); })
       .finally(() => { if (active) setIsLoading(false); });
-    return () => { active = false; };
-  }, []);
+    return () => { active = false; controller.abort(); };
+  }, [period, value, valid]);
 
   return (
     <section className={styles.page}>
@@ -47,7 +48,7 @@ export function DashboardOverviewPage() {
       </div>
       {errorMessage ? <p role="alert">{errorMessage}</p> : isLoading ? <p role="status">Carregando dados...</p>
         : !valid ? <p role="status">Informe {period === "year" ? "um ano entre 1000 e 9999" : "uma data válida"} para consultar os indicadores.</p>
-        : <>
+        : totals && <>
           <h2>Movimentação</h2>
           <p>Sessões com entrada no período, agrupadas pela situação atual.</p>
           <div className={styles.cards}>

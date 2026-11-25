@@ -1,5 +1,3 @@
-import type { ParkingSession } from "../../../auth/types/parkingSession.types";
-
 export type Period = "day" | "month" | "year";
 
 export function localDateKey(date: Date) {
@@ -10,23 +8,14 @@ export function localDateKey(date: Date) {
   ].join("-");
 }
 
-export function summarizePeriod(sessions: ParkingSession[], period: Period, value: string) {
-  const length = { day: 10, month: 7, year: 4 }[period];
-
-  function matches(timestamp: string) {
-    const date = new Date(timestamp);
-    return !Number.isNaN(date.getTime()) && localDateKey(date).slice(0, length) === value;
-  }
-
-  const totals = { entries: 0, ABERTO: 0, FECHADO: 0, CANCELADO: 0, revenue: 0 };
-  for (const session of sessions) {
-    if (matches(session.entrada)) {
-      totals.entries++;
-      totals[session.status]++;
-    }
-    if (session.status === "FECHADO" && session.saida && matches(session.saida)) {
-      totals.revenue += Number(session.valor_total ?? 0);
-    }
-  }
-  return totals;
+export function periodRange(period: Period, value: string) {
+  const [year, month = 1, day = 1] = value.split("-").map(Number);
+  const start = new Date(0);
+  start.setFullYear(year, month - 1, day);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+  if (period === "day") end.setDate(day + 1);
+  if (period === "month") end.setMonth(month);
+  if (period === "year") end.setFullYear(year + 1);
+  return { start: start.toISOString(), end: end.toISOString() };
 }

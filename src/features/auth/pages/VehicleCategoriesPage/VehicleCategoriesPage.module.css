@@ -75,15 +75,17 @@
 }
 
 .tableCard {
+  overflow-x: auto;
   width: 100%;
-  min-height: 620px;
+  min-height: 0;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 18px;
-  padding: 28px;
+  padding: clamp(12px, 2vw, 28px);
 }
 
 .table {
+  min-width: 700px;
   width: 100%;
   border-collapse: collapse;
 }
@@ -163,11 +165,13 @@
 }
 
 .modal {
+  max-height: 100%;
+  overflow-y: auto;
   width: 100%;
   max-width: 520px;
   border-radius: 22px;
   background: #ffffff;
-  padding: 32px;
+  padding: clamp(16px, 4vw, 32px);
   border: 1px solid #e5e7eb;
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
 }
@@ -205,7 +209,8 @@
 
   .formGroup {
     display: flex;
-    gap: 30px;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .formGroup select {
@@ -219,6 +224,7 @@
 }
 
 .modalActions {
+  flex-wrap: wrap;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -233,11 +239,9 @@
   }
 
 
-  .tableCard {
-    overflow-x: auto;
-  }
-
-  .table {
-    min-width: 700px;
+}
+@media (max-width: 480px) {
+  .modalActions > button {
+    width: 100%;
   }
 }

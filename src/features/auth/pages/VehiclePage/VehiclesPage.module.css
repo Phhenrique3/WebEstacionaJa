@@ -33,7 +33,7 @@
     align-items: center;
     justify-content: center;
     margin-top: 20px;
-    
+
 }
 
 .actions button {
@@ -96,7 +96,7 @@
 
 .summaryGrid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
     gap: 20px;
     margin-bottom: 28px;
 }
@@ -268,7 +268,7 @@
 
 .formGrid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
 }
 
@@ -278,7 +278,7 @@
     background: #f9fafb;
     padding: 22px;
     display: grid;
-    grid-template-columns: 1fr 1fr 1.5fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.5fr);
     gap: 20px;
 }
 
@@ -321,11 +321,11 @@
 
 .tableCard {
     width: 100%;
-    min-height: 560px;
+    min-height: 0;
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 18px;
-    padding: 28px;
+    padding: clamp(12px, 2vw, 28px);
     overflow-x: auto;
 }
 
@@ -381,9 +381,6 @@
 }
 
 @media (max-width: 1000px) {
-    .summaryGrid {
-        grid-template-columns: repeat(2, 1fr);
-    }
 
     .previewBox {
         grid-template-columns: 1fr;
@@ -395,10 +392,6 @@
         align-items: flex-start;
         flex-direction: column;
         gap: 16px;
-    }
-
-    .summaryGrid {
-        grid-template-columns: 1fr;
     }
 
     .formGrid {

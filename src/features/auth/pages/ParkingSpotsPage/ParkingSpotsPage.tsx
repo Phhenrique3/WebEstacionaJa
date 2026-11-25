@@ -1,5 +1,7 @@
+import { Pagination } from "../../../../components/pagination/Pagination";
+import { usePagedList } from "../../../../components/pagination/usePagedList";
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 import { Button } from "../../../../components/ui/Button";
@@ -7,7 +9,7 @@ import { Input } from "../../../../components/ui/Input";
 
 import {
   createParkingSpot,
-  getParkingSpots,
+
   DeleteSpot,
   UpdateParking,
 } from "../../services/parkingSpotService";
@@ -22,50 +24,19 @@ type ModalMode = "create" | "edit";
 import styles from "./ParkingSpotsPage.module.css";
 
 export function ParkingSpotsPage() {
-  const [spots, setSpots] = useState<ParkingSpot[]>([]);
-  const [search, setSearch] = useState("");
+  const list = usePagedList<ParkingSpot>("/parking-spots");
+  const { search, setSearch, loading: isLoading, items: filteredSpots } = list;
 
   const [numero, setNumero] = useState("");
   const [patio, setPatio] = useState("");
 
-  const [isLoading, setIsLoading] = useState(false);
+
   const [isSaving, setIsSaving] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [selectedSpotId, setSelectedSpotId] = useState<string | null>(null);
 
   const [errorMessage, setErrorMessage] = useState("");
-
-  const filteredSpots = useMemo(() => {
-    const searchText = search.toLowerCase();
-
-    return spots.filter((spot) => {
-      return (
-        spot.numero.toLowerCase().includes(searchText) ||
-        (spot.patio || "").toLowerCase().includes(searchText) ||
-        spot.status.toLowerCase().includes(searchText)
-      );
-    });
-  }, [spots, search]);
-
-  async function loadSpots() {
-    try {
-      setIsLoading(true);
-      setErrorMessage("");
-
-      const data = await getParkingSpots();
-
-      setSpots(data);
-    } catch {
-      setErrorMessage("Erro ao carregar vagas.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadSpots();
-  }, []);
 
   function closeModal() {
     setIsModalOpen(false);
@@ -101,7 +72,7 @@ export function ParkingSpotsPage() {
       }
 
       closeModal();
-      await loadSpots();
+      list.refresh();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const responseData = error.response?.data as { message?: string };
@@ -172,7 +143,7 @@ export function ParkingSpotsPage() {
       setErrorMessage("");
       await DeleteSpot(spot.id);
 
-      setSpots((current) => current.filter((item) => item.id !== spot.id));
+      list.refresh();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const responseData = error.response?.data as { message?: string };
@@ -197,34 +168,34 @@ export function ParkingSpotsPage() {
         </Button>
       </header>
 
-      {errorMessage && (
-        <div className={styles.errorMessage}>{errorMessage}</div>
+      {(errorMessage || list.error) && (
+        <div className={styles.errorMessage}>{errorMessage || list.error}</div>
       )}
 
       <div className={styles.summaryGrid}>
         <div className={styles.summaryCard}>
           <span>Total de vagas</span>
-          <strong>{spots.length}</strong>
+          <strong>{list.summary?.total ?? 0}</strong>
         </div>
 
         <div className={styles.summaryCard}>
           <span>Disponíveis</span>
           <strong>
-            {spots.filter((spot) => spot.status === "DISPONIVEL").length}
+            {list.summary?.DISPONIVEL ?? 0}
           </strong>
         </div>
 
         <div className={styles.summaryCard}>
           <span>Ocupadas</span>
           <strong>
-            {spots.filter((spot) => spot.status === "OCUPADA").length}
+            {list.summary?.OCUPADA ?? 0}
           </strong>
         </div>
 
         <div className={styles.summaryCard}>
           <span>Reservadas</span>
           <strong>
-            {spots.filter((spot) => spot.status === "RESERVADA").length}
+            {list.summary?.RESERVADA ?? 0}
           </strong>
         </div>
       </div>
@@ -305,6 +276,7 @@ export function ParkingSpotsPage() {
           </table>
         )}
       </div>
+      <Pagination {...list} label="Paginação de vagas" />
 
       {isModalOpen && (
         <div className={styles.modalOverlay}>

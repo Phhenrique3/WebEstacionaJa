@@ -5,8 +5,9 @@
   background: #eef1f8;
   display: flex;
   align-items: center;
-  padding-left: 80px;
-  gap: 120px;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 64px);
+  gap: clamp(24px, 6vw, 96px);
 }
 
 .brandCard {
@@ -35,11 +36,12 @@
 
 .formCard {
   width: 460px;
+  min-width: 0;
   min-height: 590px;
   border-radius: 22px;
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  padding: 65px;
+  padding: clamp(24px, 4vw, 65px);
 }
 
 .formHeader {
@@ -66,6 +68,8 @@
 }
 
 .options {
+  flex-wrap: wrap;
+  gap: 12px;
   margin: 28px 0 40px;
   display: flex;
   align-items: center;
@@ -142,7 +146,8 @@
   .formCard {
     width: 100%;
     max-width: 460px;
-    padding: 40px;
+    min-height: auto;
+    padding: clamp(16px, 5vw, 40px);
   }
 
 }

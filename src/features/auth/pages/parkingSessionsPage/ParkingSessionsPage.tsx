@@ -1,6 +1,8 @@
+import { EntrySearch } from "../../../../components/parking/EntrySearch/EntrySearch";
+import { Pagination } from "../../../../components/pagination/Pagination";
 import { ParkingSessionDetailsModal } from "../../../../components/parking/ParkingSessionDetailsModal/ParkingSessionDetailsModal";
 import { formatDate, formatMinutes, formatCurrency } from "../../parkingSessionFormat";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
 import axios from "axios";
@@ -10,7 +12,8 @@ import { CancelParkingModal } from "../../../../components/cancel/CancelParkingM
 import {
     cancelParkingSession,
     closeParkingSession,
-    getParkingSessions,
+    getParkingSessionPage,
+    type SessionPage,
     CreateParkingSession
 } from "../../services/parkingSessionService";
 
@@ -33,10 +36,8 @@ import type { MetodoPagamento } from "../../types/payment.types";
 
 
 import styles from "./ParkingSessionsPage.module.css";
-import { getVehicles } from "../../services/vehicleService";
 import type { Vehicle } from "../../types/vehicle.types";
 
-import { getParkingSpots } from "../../services/parkingSpotService";
 import type { ParkingSpot } from "../../types/parkingSpotTypes";
 
 
@@ -46,10 +47,11 @@ export function ParkingSessionsPage() {
 
 
 
-    const [sessions, setSessions] = useState<ParkingSession[]>([]);
+    const [result, setResult] = useState<SessionPage | null>(null);
+    const [page, setPage] = useState(1);
+    const [revision, setRevision] = useState(0);
+    const refreshSessions = () => setRevision(current => current + 1);
     const [search, setSearch] = useState("");
-    const [vehicles, setVehicles] = useState<Vehicle[]>([])
-    const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([])
     const [detailSessionId, setDetailSessionId] = useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [isCreatingSession, setIsCreatingSession] = useState(false)
@@ -58,12 +60,12 @@ export function ParkingSessionsPage() {
         useState<ParkingSessionForPayment | null>(null);
 
     const [vehicleId, setVehicleId] = useState("")
+    const [vehicleIdLabel, setVehicleIdLabel] = useState("");
     const [parkingSpotId, setParkingSpotId] = useState("")
+    const [parkingSpotIdLabel, setParkingSpotIdLabel] = useState("");
     const [tipoCobranca, setTipoCobranca] =
         useState<ParkingSessionChargeType>("HORA");
 
-    const [vehicleSearch, setVehicleSearch] = useState("")
-    const [spotSearch, setSpotSearch] = useState("");
 
     const [selectedCancelSession, setSelectedCancelSession] =
         useState<ParkingSession | null>(null);
@@ -73,133 +75,28 @@ export function ParkingSessionsPage() {
     const [isActionLoading, setIsActionLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
-    /** Filtra sessões por placa, cliente, vaga, pátio ou status. */
-    const filteredSessions = useMemo(() => {
-        const searchText = search.toLowerCase();
-
-        return sessions.filter((session) => {
-            const plate = session.vehicle?.placa || "";
-            const clientName = session.vehicle?.client?.name || "";
-            const spotNumber = session.parkingSpot?.numero || "";
-            const patio = session.parkingSpot?.patio || "";
-
-            return (
-                plate.toLowerCase().includes(searchText) ||
-                clientName.toLowerCase().includes(searchText) ||
-                spotNumber.toLowerCase().includes(searchText) ||
-                patio.toLowerCase().includes(searchText) ||
-                session.status.toLowerCase().includes(searchText)
-            );
-        });
-    }, [sessions, search]);
-
-    /** Seleciona as sessões que ainda estão abertas. */
-    const openedSessions = sessions.filter(
-        (session) => session.status === "ABERTO"
-    );
-
-    /** Seleciona as sessões já encerradas. */
-    const closedSessions = sessions.filter(
-        (session) => session.status === "FECHADO"
-    );
-
-    /** Seleciona as sessões canceladas. */
-    const canceledSessions = sessions.filter(
-        (session) => session.status === "CANCELADO"
-    );
-
-    /** Mantém somente as vagas que podem receber uma nova entrada. */
-    const availableParkingSpots = useMemo(() => {
-        return parkingSpots.filter((spot) => spot.status === "DISPONIVEL")
-    }, [parkingSpots])
-
-    const selectedVehicle = vehicles.find((vehicle) => vehicle.id === vehicleId);
-
-    const selectedParkingSpot = parkingSpots.find(
-        (spot) => spot.id === parkingSpotId
-    );
-
-
-
-    /** Filtra veículos pelo texto digitado no formulário de entrada. */
-    const filteredVehicles = useMemo(() => {
-        const searchText = vehicleSearch.trim().toLocaleLowerCase()
-
-
-        if (!searchText) {
-            return vehicles
-        }
-
-
-        return vehicles.filter((vehicles) => {
-            const placa = vehicles.placa || ""
-            const modelo = vehicles.modelo || ""
-            const cor = vehicles.cor || ""
-            const marca = vehicles.marca || ""
-            const clientName = vehicles.client?.name || ""
-
-            return (
-                placa.toLocaleLowerCase().includes(searchText) ||
-                modelo.toLocaleLowerCase().includes(searchText) ||
-                cor.toLocaleLowerCase().includes(searchText) ||
-                marca.toLocaleLowerCase().includes(searchText) ||
-                clientName.toLocaleLowerCase().includes(searchText)
-            )
-        })
-    }, [vehicles, vehicleSearch])
-
-    /** Filtra as vagas disponíveis pelo número ou pelo pátio. */
-    const filteredParkingSpots = useMemo(() => {
-        const searchText = spotSearch.trim().toLowerCase();
-
-        if (!searchText) {
-            return availableParkingSpots;
-        }
-
-        return availableParkingSpots.filter((spot) => {
-            const numero = spot.numero || "";
-            const patio = spot.patio || "";
-
-            return (
-                numero.toLowerCase().includes(searchText) ||
-                patio.toLowerCase().includes(searchText)
-            );
-        });
-    }, [availableParkingSpots, spotSearch]);
-
-    /** Busca as sessões na API e atualiza o estado da tabela. */
-    async function loadSessions() {
-        try {
-            setIsLoading(true);
-            setErrorMessage("");
-
-            const data = await getParkingSessions();
-
-            setSessions(data);
-        } catch {
-            setErrorMessage("Erro ao carregar sessões de estacionamento.");
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
-    /** Busca em paralelo os veículos e as vagas usados no formulário. */
-    async function loadCreateModalData() {
-        try {
-            const [vehicleData, parkingSpotData] = await Promise.all([
-                getVehicles(),
-                getParkingSpots()
-            ])
-            setVehicles(vehicleData);
-            setParkingSpots(parkingSpotData);
-        } catch {
-            setErrorMessage("Erro ao carregar veículos e vagas disponíveis. ")
-        }
-    }
-
     useEffect(() => {
-        loadSessions();
-    }, []);
+        const controller = new AbortController();
+        setIsLoading(true);
+        setErrorMessage("");
+        getParkingSessionPage(page, search, controller.signal)
+            .then(data => {
+                if (!controller.signal.aborted) {
+                    setResult(data);
+                    setPage(data.page);
+                }
+            })
+            .catch(() => {
+                if (!controller.signal.aborted) {
+                    setResult(null);
+                    setErrorMessage("Erro ao carregar sessões de estacionamento.");
+                }
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) setIsLoading(false);
+            });
+        return () => controller.abort();
+    }, [page, search, revision]);
 
     /** Confirma e encerra uma sessão aberta, recarregando a tabela ao concluir. */
     async function handleCloseSession(
@@ -236,7 +133,7 @@ export function ParkingSessionsPage() {
 
             setSelectedCancelSession(null);
 
-            await loadSessions();
+            refreshSessions();
         } finally {
             setIsActionLoading(false);
         }
@@ -247,7 +144,6 @@ export function ParkingSessionsPage() {
         setErrorMessage("")
         resertCreateForm()
 
-        await loadCreateModalData()
         setIsCreateModalOpen(true)
     }
 
@@ -302,7 +198,7 @@ export function ParkingSessionsPage() {
 
             handleCloseCreateModal();
 
-            await loadSessions();
+            refreshSessions();
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 const responseData = error.response?.data as { message?: string };
@@ -346,10 +242,10 @@ export function ParkingSessionsPage() {
     /** Limpa as seleções e buscas do formulário de registro de entrada. */
     function resertCreateForm() {
         setVehicleId("")
+        setVehicleIdLabel("")
         setParkingSpotId("")
+        setParkingSpotIdLabel("")
         setTipoCobranca("HORA")
-        setVehicleSearch("")
-        setSpotSearch("")
 
 
     }
@@ -400,22 +296,22 @@ export function ParkingSessionsPage() {
             <div className={styles.summaryGrid}>
                 <div className={styles.summaryCard}>
                     <span>Sessões abertas</span>
-                    <strong>{openedSessions.length}</strong>
+                    <strong>{result?.summary.ABERTO ?? "—"}</strong>
                 </div>
 
                 <div className={styles.summaryCard}>
                     <span>Fechadas</span>
-                    <strong>{closedSessions.length}</strong>
+                    <strong>{result?.summary.FECHADO ?? "—"}</strong>
                 </div>
 
                 <div className={styles.summaryCard}>
                     <span>Canceladas</span>
-                    <strong>{canceledSessions.length}</strong>
+                    <strong>{result?.summary.CANCELADO ?? "—"}</strong>
                 </div>
 
                 <div className={styles.summaryCard}>
                     <span>Total de sessões</span>
-                    <strong>{sessions.length}</strong>
+                    <strong>{result ? result.summary.ABERTO + result.summary.FECHADO + result.summary.CANCELADO : "—"}</strong>
                 </div>
             </div>
 
@@ -426,7 +322,7 @@ export function ParkingSessionsPage() {
                     type="text"
                     placeholder="Buscar por placa, cliente, vaga ou status..."
                     value={search}
-                    onChange={(event) => setSearch(event.target.value)}
+                    onChange={(event) => { setSearch(event.target.value); setPage(1); }}
                 />
             </div>
 
@@ -451,40 +347,40 @@ export function ParkingSessionsPage() {
                         </thead>
 
                         <tbody>
-                            {filteredSessions.map((session) => (
+                            {result?.items.map((session) => (
                                 <tr key={session.id}>
-                                    <td>{session.vehicle?.placa || "-"}</td>
+                                    <td data-label="Placa">{session.vehicle?.placa || "-"}</td>
 
-                                    <td>{session.vehicle?.client?.name || "-"}</td>
+                                    <td data-label="Cliente">{session.vehicle?.client?.name || "-"}</td>
 
-                                    <td>
+                                    <td data-label="Veículo">
                                         {session.vehicle
                                             ? `${session.vehicle.marca} ${session.vehicle.modelo}`
                                             : "-"}
                                     </td>
 
-                                    <td>
+                                    <td data-label="Vaga">
                                         {session.parkingSpot
                                             ? `${session.parkingSpot.numero} - ${session.parkingSpot.patio || "Sem pátio"
                                             }`
                                             : "-"}
                                     </td>
 
-                                    <td>{formatDate(session.entrada)}</td>
+                                    <td data-label="Entrada">{formatDate(session.entrada)}</td>
 
-                                    <td>{session.tipo_cobranca}</td>
+                                    <td data-label="Tipo">{session.tipo_cobranca}</td>
 
-                                    <td>
+                                    <td data-label="Status">
                                         <span className={getStatusClass(session.status)}>
                                             {getStatusLabel(session.status)}
                                         </span>
                                     </td>
 
-                                    <td>{formatMinutes(session.tempo_total_minutos)}</td>
+                                    <td data-label="Tempo">{formatMinutes(session.tempo_total_minutos)}</td>
 
-                                    <td>{formatCurrency(session.valor_total)}</td>
+                                    <td data-label="Valor">{formatCurrency(session.valor_total)}</td>
 
-                                    <td>
+                                    <td data-label="Ações">
                                         <div className={styles.actions}>
                                             {session.status === "ABERTO" ? (
                                                 <>
@@ -512,7 +408,7 @@ export function ParkingSessionsPage() {
                                 </tr>
                             ))}
 
-                            {filteredSessions.length === 0 && (
+                            {result?.total === 0 && (
                                 <tr>
                                     <td colSpan={10} className={styles.emptyMessage}>
                                         Nenhuma sessão encontrada.
@@ -523,6 +419,7 @@ export function ParkingSessionsPage() {
                     </table>
                 )}
             </div>
+            {result && <Pagination {...result} loading={isLoading} setPage={setPage} label="Paginação das sessões" />}
             {detailSessionId && (
                 <ParkingSessionDetailsModal
                     key={detailSessionId}
@@ -547,70 +444,18 @@ export function ParkingSessionsPage() {
 
                         <form onSubmit={handleCreateSession} className={styles.form}>
                             <div className={styles.formGroup}>
-                                <label htmlFor="vehicleSearch">Veículo</label>
-
-                                <input
-                                    id="vehicleSearch"
-                                    type="text"
-                                    className={styles.searchInput}
-                                    placeholder="Pesquisar por placa, cliente, marca ou modelo..."
-                                    value={vehicleSearch}
-                                    onChange={(event) => {
-                                        setVehicleSearch(event.target.value);
-                                        setVehicleId("");
-                                    }}
-                                />
-
-                                <select
-                                    id="vehicleId"
-                                    value={vehicleId}
-                                    onChange={(event) => setVehicleId(event.target.value)}
-                                >
-                                    <option value="">Selecione um veículo</option>
-
-                                    {filteredVehicles.map((vehicle) => (
-                                        <option key={vehicle.id} value={vehicle.id}>
-                                            {vehicle.placa} - {vehicle.marca} {vehicle.modelo}
-                                            {vehicle.client?.name ? ` - ${vehicle.client.name}` : ""}
-                                        </option>
-                                    ))}
-                                </select>
-
-                                <small>{filteredVehicles.length} veículo(s) encontrado(s)</small>
+                                <EntrySearch<Vehicle> id="vehicleId" label="Veículo" path="/vehicles" placeholder="Placa, modelo ou cliente"
+                                    selectedLabel={vehicleIdLabel}
+                                    title={item => item.placa}
+                                    description={item => [[item.marca, item.modelo].filter(Boolean).join(" "), item.client?.name].filter(Boolean).join(" · ")}
+                                    onChange={(id, text) => { setVehicleId(id); setVehicleIdLabel(text); }} />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label htmlFor="spotSearch">Vaga disponível</label>
-
-                                <input
-                                    id="spotSearch"
-                                    type="text"
-                                    className={styles.searchInput}
-                                    placeholder="Pesquisar por número da vaga ou pátio..."
-                                    value={spotSearch}
-                                    onChange={(event) => {
-                                        setSpotSearch(event.target.value);
-                                        setParkingSpotId("");
-                                    }}
-                                />
-
-                                <select
-                                    id="parkingSpotId"
-                                    value={parkingSpotId}
-                                    onChange={(event) => setParkingSpotId(event.target.value)}
-                                >
-                                    <option value="">Selecione uma vaga disponível</option>
-
-                                    {filteredParkingSpots.map((spot) => (
-                                        <option key={spot.id} value={spot.id}>
-                                            {spot.numero} - {spot.patio || "Sem pátio"}
-                                        </option>
-                                    ))}
-                                </select>
-
-                                <small>
-                                    {filteredParkingSpots.length} vaga(s) disponível(is)
-                                </small>
+                                <EntrySearch<ParkingSpot> id="parkingSpotId" label="Vaga disponível" path="/parking-spots" placeholder="Número da vaga ou pátio"
+                                    selectedLabel={parkingSpotIdLabel}
+                                    title={item => item.numero} description={item => item.patio || "Sem pátio"}
+                                    onChange={(id, text) => { setParkingSpotId(id); setParkingSpotIdLabel(text); }} />
                             </div>
 
                             <div className={styles.formGroup}>
@@ -637,17 +482,12 @@ export function ParkingSessionsPage() {
 
                                 <p>
                                     Veículo:{" "}
-                                    {selectedVehicle
-                                        ? `${selectedVehicle.placa} - ${selectedVehicle.marca} ${selectedVehicle.modelo}`
-                                        : "Nenhum veículo selecionado"}
+                                    {vehicleIdLabel || "Nenhum veículo selecionado"}
                                 </p>
 
                                 <p>
                                     Vaga:{" "}
-                                    {selectedParkingSpot
-                                        ? `${selectedParkingSpot.numero} - ${selectedParkingSpot.patio || "Sem pátio"
-                                        }`
-                                        : "Nenhuma vaga selecionada"}
+                                    {parkingSpotIdLabel || "Nenhuma vaga selecionada"}
                                 </p>
 
                                 <p>Tipo de cobrança: {tipoCobranca}</p>
@@ -677,12 +517,12 @@ export function ParkingSessionsPage() {
                     session={selectedPaymentSession}
                     onClose={() => {
                         setSelectedPaymentSession(null);
-                        void loadSessions();
+                        refreshSessions();
                     }}
                     onCloseSession={handleCloseSession}
                     onConfirmPayment={handleConfirmPayment}
                     onSuccess={async () => {
-                        await loadSessions();
+                        refreshSessions();
                         setSelectedPaymentSession(null);
                     }}
                 />

@@ -13,7 +13,7 @@
 .modal {
   width: 100%;
   max-width: 480px;
-  max-height: 90vh;
+  max-height: 100%;
   overflow-y: auto;
   padding: 28px;
   border-radius: 16px;

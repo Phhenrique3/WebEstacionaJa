@@ -1,16 +1,18 @@
+import { PagedSelect } from "../../../../components/pagination/PagedSelect";
+import { Pagination } from "../../../../components/pagination/Pagination";
+import { usePagedList } from "../../../../components/pagination/usePagedList";
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 import { Button } from "../../../../components/ui/Button";
 import { Input } from "../../../../components/ui/Input";
 
-import { getVehicleCategories } from "../../services/vehicleCategoryService";
 import type { vehicleCategory } from "../..//types/vehicleCategory.types";
 
 import {
   createPricingRule,
-  getPricingRules,
+
   updatePricingRule,
 } from "../../services/pricingRuleService";
 
@@ -21,18 +23,18 @@ import styles from "./PricingRulesPage.module.css";
 const chargeTypes = ["Hora", "Minuto", "Diaria", "Mensal"];
 type ModalMode = "create" | "edit";
 export function PricingRulesPage() {
-  const [rules, setRules] = useState<PricingRules[]>([]);
-  const [categories, setCategories] = useState<vehicleCategory[]>([]);
+  const list = usePagedList<PricingRules>("/pricing-rules");
 
-  const [search, setSearch] = useState("");
+  const { search, setSearch, loading: isLoading, items: filteredRules } = list;
 
-  const [isLoading, setIsLoading] = useState(false);
+
   const [isSaving, setIsSaving] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [selectedRuleId, setSelectedRuleId] = useState("");
 
   const [categoryId, setCategoryId] = useState("");
+    const [categoryIdLabel, setCategoryIdLabel] = useState("");
   const [tipoCobranca, setTipoCobranca] = useState("Hora");
   const [valor, setValor] = useState("");
   const [toleranciaMinutos, setToleranciaMinutos] = useState("0");
@@ -40,49 +42,10 @@ export function PricingRulesPage() {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const filteredRules = useMemo(() => {
-    const searchText = search.toLowerCase();
-
-    return rules.filter((rule) => {
-      const categoryName = rule.category?.name || "";
-
-      return (
-        categoryName.toLowerCase().includes(searchText) ||
-        rule.tipo_cobranca.toLowerCase().includes(searchText) ||
-        String(rule.valor).includes(searchText) ||
-        (rule.active ? "ativo" : "inativo").includes(searchText)
-      );
-    });
-  }, [rules, search]);
-
-  async function loadData() {
-    try {
-      setIsLoading(true);
-      setErrorMessage("");
-
-      const [rulesData, categoriesData] = await Promise.all([
-        getPricingRules(),
-        getVehicleCategories(),
-      ]);
-
-      setRules(rulesData);
-      setCategories(categoriesData.filter((category) => category.active));
-    } catch {
-      setErrorMessage("Erro ao carregar regras de cobrança.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
   function resetForm() {
     setSelectedRuleId("");
     setCategoryId("");
+      setCategoryIdLabel("");
     setTipoCobranca("Hora");
     setValor("");
     setToleranciaMinutos("0");
@@ -107,6 +70,7 @@ export function PricingRulesPage() {
     setModalMode("edit");
     setSelectedRuleId(rule.id);
     setCategoryId(rule.categoryId);
+    setCategoryIdLabel(rule.category?.name ?? rule.categoryId);
     setTipoCobranca(rule.tipo_cobranca);
     setValor(String(rule.valor));
     setToleranciaMinutos(String(rule.tolerancia_minutos));
@@ -169,7 +133,7 @@ export function PricingRulesPage() {
 
       closeModal();
 
-      await loadData();
+      list.refresh();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const responseData = error.response?.data as { message?: string };
@@ -207,8 +171,8 @@ export function PricingRulesPage() {
         </Button>
       </header>
 
-      {errorMessage && (
-        <div className={styles.errorMessage}>{errorMessage}</div>
+      {(errorMessage || list.error) && (
+        <div className={styles.errorMessage}>{errorMessage || list.error}</div>
       )}
 
       <div className={styles.searchBox}>
@@ -282,6 +246,7 @@ export function PricingRulesPage() {
           </table>
         )}
       </div>
+      <Pagination {...list} label="Paginação de regras" />
 
       {isModalOpen && (
         <div className={styles.modalOverlay}>
@@ -303,22 +268,11 @@ export function PricingRulesPage() {
 
             <form onSubmit={handleSubmitRule} className={styles.form}>
               <div className={styles.formGroup}>
-                <label htmlFor="categoryId">Categoria</label>
-
-                <select
-                  id="categoryId"
-                  value={categoryId}
-                  onChange={(event) => setCategoryId(event.target.value)}
-                >
-                  <option value="">Selecione uma categoria</option>
-
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                <PagedSelect<vehicleCategory> id="categoryId" label="Categoria" path="/vehicle-categories" scope="active"
+                                    value={categoryId} selectedLabel={categoryIdLabel}
+                                    format={item => item.name}
+                                    onChange={(id, text) => { setCategoryId(id); setCategoryIdLabel(text); }} />
+                            </div>
 
               <div className={styles.formGroup}>
                 <label htmlFor="tipoCobranca">Tipo de Cobrança</label>

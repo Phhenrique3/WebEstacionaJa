@@ -28,7 +28,7 @@
   background: transparent;
   font-size: 18px;
   cursor: pointer;
-  
+
 }
 .header p {
   margin: 8px 0 0;
@@ -37,7 +37,7 @@
 
 .summaryGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
   gap: 20px;
   margin-bottom: 28px;
 }
@@ -121,15 +121,17 @@
 }
 
 .tableCard {
+  overflow-x: auto;
   width: 100%;
-  min-height: 620px;
+  min-height: 0;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 18px;
-  padding: 28px;
+  padding: clamp(12px, 2vw, 28px);
 }
 
 .table {
+  min-width: 700px;
   width: 100%;
   border-collapse: collapse;
 }
@@ -208,11 +210,13 @@
 }
 
 .modal {
+  max-height: 100%;
+  overflow-y: auto;
   width: 100%;
   max-width: 520px;
   border-radius: 22px;
   background: #ffffff;
-  padding: 32px;
+  padding: clamp(16px, 4vw, 32px);
   border: 1px solid #e5e7eb;
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
 }
@@ -257,6 +261,7 @@
 }
 
 .modalActions {
+  flex-wrap: wrap;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -270,15 +275,9 @@
     gap: 16px;
   }
 
-  .summaryGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .tableCard {
-    overflow-x: auto;
-  }
-
-  .table {
-    min-width: 700px;
+}
+@media (max-width: 480px) {
+  .modalActions > button {
+    width: 100%;
   }
 }

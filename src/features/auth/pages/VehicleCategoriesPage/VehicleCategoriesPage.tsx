@@ -1,5 +1,7 @@
+import { Pagination } from "../../../../components/pagination/Pagination";
+import { usePagedList } from "../../../../components/pagination/usePagedList";
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 import { Button } from "../../../../components/ui/Button";
@@ -7,7 +9,7 @@ import { Input } from "../../../../components/ui/Input";
 
 import {
   createVehicleCategory,
-  getVehicleCategories,
+
   updateVehicleCategory,
 } from "../../services/vehicleCategoryService";
 
@@ -18,10 +20,10 @@ import styles from "./VehicleCategoriesPage.module.css";
 type ModalMode = "create" | "edit";
 
 export function VehicleCategoriesPage() {
-  const [categories, setCategories] = useState<vehicleCategory[]>([]);
-  const [search, setSearch] = useState("");
+  const list = usePagedList<vehicleCategory>("/vehicle-categories");
+  const { search, setSearch, loading: isLoading, items: filteredCategories } = list;
 
-  const [isLoading, setIsLoading] = useState(false);
+
   const [isSaving, setIsSaving] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -33,37 +35,6 @@ export function VehicleCategoriesPage() {
   const [active, setActive] = useState(true);
 
   const [errorMessage, setErrorMessage] = useState("");
-
-  const filteredCategories = useMemo(() => {
-    const searchText = search.toLowerCase();
-
-    return categories.filter((category) => {
-      return (
-        category.name.toLowerCase().includes(searchText) ||
-        category.description?.toLowerCase().includes(searchText) ||
-        (category.active ? "ativo" : "inativo").includes(searchText)
-      );
-    });
-  }, [categories, search]);
-
-  async function loadCategories() {
-    try {
-      setIsLoading(true);
-      setErrorMessage("");
-
-      const data = await getVehicleCategories();
-
-      setCategories(data);
-    } catch {
-      setErrorMessage("Erro ao carregar categorias de veículos.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadCategories();
-  }, []);
 
   function resetForm() {
     setSelectedCategoryId("");
@@ -108,29 +79,22 @@ export function VehicleCategoriesPage() {
       setIsSaving(true);
 
       if (modalMode === "create") {
-        const newCategory = await createVehicleCategory({
+        await createVehicleCategory({
           name,
           description,
         });
 
-        setCategories((currentCategories) => [
-          ...currentCategories,
-          newCategory,
-        ]);
+        list.refresh();
       }
 
       if (modalMode === "edit") {
-        const updatedCategory = await updateVehicleCategory(selectedCategoryId, {
+        await updateVehicleCategory(selectedCategoryId, {
           name,
           description,
           active,
         });
 
-        setCategories((currentCategories) =>
-          currentCategories.map((category) =>
-            category.id === selectedCategoryId ? updatedCategory : category
-          )
-        );
+        list.refresh();
       }
 
       closeModal();
@@ -164,8 +128,8 @@ export function VehicleCategoriesPage() {
         </Button>
       </header>
 
-      {errorMessage && (
-        <div className={styles.errorMessage}>{errorMessage}</div>
+      {(errorMessage || list.error) && (
+        <div className={styles.errorMessage}>{errorMessage || list.error}</div>
       )}
 
       <div className={styles.searchBox}>
@@ -234,6 +198,7 @@ export function VehicleCategoriesPage() {
           </table>
         )}
       </div>
+      <Pagination {...list} label="Paginação de categorias" />
 
       {isModalOpen && (
         <div className={styles.modalOverlay}>

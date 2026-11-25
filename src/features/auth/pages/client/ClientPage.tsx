@@ -1,12 +1,14 @@
+import { Pagination } from "../../../../components/pagination/Pagination";
+import { usePagedList } from "../../../../components/pagination/usePagedList";
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 import { Button } from "../../../../components/ui/Button";
 import { Input } from "../../../../components/ui/Input";
 import {
   createClient,
-  getClients,
+
   updateClient,
 } from "../../services/clientService";
 import type {
@@ -22,9 +24,9 @@ type ModalMode = "create" | "edit";
 const documentTypes: TipoDocumento[] = ["CPF", "CNPJ"];
 
 export function ClientPage() {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [search, setSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const list = usePagedList<Client>("/clients");
+  const { search, setSearch, loading: isLoading, items: filteredClients } = list;
+
   const [isSaving, setIsSaving] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<ModalMode>("create");
@@ -37,42 +39,6 @@ export function ClientPage() {
   const [documento, setDocumento] = useState("");
   const [active, setActive] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-
-  const filteredClients = useMemo(() => {
-    const searchText = search.trim().toLocaleLowerCase("pt-BR");
-
-    return clients.filter((client) =>
-      [
-        client.name,
-        client.email ?? "",
-        client.telefone,
-        client.documento,
-        client.tipo_documento,
-        client.active ? "ativo" : "inativo",
-      ].some((value) =>
-        value.toLocaleLowerCase("pt-BR").includes(searchText)
-      )
-    );
-  }, [clients, search]);
-
-  async function loadClients() {
-    try {
-      setIsLoading(true);
-      setErrorMessage("");
-
-      const data = await getClients();
-
-      setClients(data);
-    } catch {
-      setErrorMessage("Erro ao carregar clientes.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    void loadClients();
-  }, []);
 
   function resetForm() {
     setSelectedClientId("");
@@ -145,20 +111,16 @@ export function ClientPage() {
       setIsSaving(true);
 
       if (modalMode === "create") {
-        const newClient = await createClient(data);
+        await createClient(data);
 
-        setClients((current) => [newClient, ...current]);
+        list.refresh();
       } else {
-        const updatedClient = await updateClient(selectedClientId, {
+        await updateClient(selectedClientId, {
           ...data,
           active,
         });
 
-        setClients((current) =>
-          current.map((client) =>
-            client.id === selectedClientId ? updatedClient : client
-          )
-        );
+        list.refresh();
       }
 
       closeModal();
@@ -195,8 +157,8 @@ export function ClientPage() {
         </Button>
       </header>
 
-      {errorMessage && (
-        <div className={styles.errorMessage}>{errorMessage}</div>
+      {(errorMessage || list.error) && (
+        <div className={styles.errorMessage}>{errorMessage || list.error}</div>
       )}
 
       <div className={styles.searchBox}>
@@ -275,6 +237,7 @@ export function ClientPage() {
           </table>
         )}
       </div>
+      <Pagination {...list} label="Paginação de clientes" />
 
       {isModalOpen && (
         <div

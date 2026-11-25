@@ -1,32 +1,28 @@
+import { PagedSelect } from "../../../../components/pagination/PagedSelect";
+import { Pagination } from "../../../../components/pagination/Pagination";
+import { usePagedList } from "../../../../components/pagination/usePagedList";
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 import { Button } from "../../../../components/ui/Button";
 import { Input } from "../../../../components/ui/Input";
 
-import { createVehicle, getVehicles, updateVichle } from "../../services/vehicleService";
+import { createVehicle, updateVichle } from "../../services/vehicleService";
 import type { Vehicle } from "../../types/vehicle.types";
 
-import { getClients } from "../../services/clientService";
 import type { Client } from "../../types/client.types";
 
-import { getVehicleCategories } from "../../services/vehicleCategoryService"
 
 import type { vehicleCategory } from "../../types/vehicleCategory.types";
 
 import styles from "./VehiclesPage.module.css";
 
 export function VehiclesPage() {
-    const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-    const [clients, setClients] = useState<Client[]>([]);
-    const [categories, setCategories] = useState<vehicleCategory[]>([]);
+    const list = usePagedList<Vehicle>("/vehicles");
 
-    const [search, setSearch] = useState("");
-    const [clientSearch, setClientSearch] = useState("");
-    const [categorySearch, setCategorySearch] = useState("");
+    const { search, setSearch, loading: isLoading, items: filteredVehicles } = list;
 
-    const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -36,7 +32,9 @@ export function VehiclesPage() {
     const [cor, setCor] = useState("");
 
     const [clientId, setClientId] = useState("");
+    const [clientIdLabel, setClientIdLabel] = useState("");
     const [categoryId, setCategoryId] = useState("");
+    const [categoryIdLabel, setCategoryIdLabel] = useState("");
 
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -45,153 +43,23 @@ export function VehiclesPage() {
     const [modalMode, setmodalMode] = useState<modalMode>("create");
     const [selectVehicleId, setSelectVehicleId] = useState("")
 
-    const filteredVehicles = useMemo(() => {
-        const searchText = search.toLowerCase();
-
-        return vehicles.filter((vehicle) => {
-            const clientName = getClientName(vehicle);
-            const categoryName = getCategoryName(vehicle);
-
-            return (
-                vehicle.placa.toLowerCase().includes(searchText) ||
-                vehicle.marca.toLowerCase().includes(searchText) ||
-                vehicle.modelo.toLowerCase().includes(searchText) ||
-                vehicle.cor.toLowerCase().includes(searchText) ||
-                clientName.toLowerCase().includes(searchText) ||
-                categoryName.toLowerCase().includes(searchText)
-            );
-        });
-    }, [vehicles, clients, categories, search]);
-
-    const acticeClients = useMemo(() => {
-        return clients.filter((client) => client.active === true)
-    }, [clients])
-
-
-    const acticeCategory = useMemo(() => {
-        return categories.filter((category) => category.active === true)
-    }, [categories])
-
-    const filteredClients = useMemo(() => {
-        const searchText = clientSearch.trim().toLowerCase();
-
-        if (!searchText) {
-            return acticeClients;
-        }
-
-        return clients.filter((client) => {
-            const name = client.name || "";
-            const email = client.email || "";
-            const telefone = client.telefone || "";
-            const documento = client.documento || "";
-
-            return (
-                name.toLowerCase().includes(searchText) ||
-                email.toLowerCase().includes(searchText) ||
-                telefone.toLowerCase().includes(searchText) ||
-                documento.toLowerCase().includes(searchText)
-            );
-        });
-    }, [clients, clientSearch]);
-
-    const filteredCategories = useMemo(() => {
-        const searchText = categorySearch.trim().toLowerCase();
-
-        if (!searchText) {
-            return acticeCategory;
-        }
-
-        return categories.filter((category) => {
-            const name = category.name || "";
-            const description = category.description || "";
-
-            return (
-                name.toLowerCase().includes(searchText) ||
-                description.toLowerCase().includes(searchText)
-            );
-        });
-    }, [categories, categorySearch]);
-
-    const selectedClient = clients.find((client) => client.id === clientId);
-
-    const selectedCategory = categories.find(
-        (category) => category.id === categoryId
-    );
-
-    async function loadVehicles() {
-        try {
-            setIsLoading(true);
-            setErrorMessage("");
-
-            const data = await getVehicles();
-
-            setVehicles(data);
-        } catch {
-            setErrorMessage("Erro ao carregar veículos.");
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
-    async function loadFormData() {
-        try {
-            const [clientsData, categoriesData] = await Promise.all([
-                getClients(),
-                getVehicleCategories(),
-            ]);
-
-            setClients(clientsData);
-            setCategories(categoriesData);
-        } catch {
-            setErrorMessage("Erro ao carregar clientes e categorias.");
-        }
-    }
-
-    useEffect(() => {
-        loadVehicles();
-        loadFormData();
-    }, []);
-
-    function getClientName(vehicle: Vehicle) {
-        if (vehicle.client?.name) {
-            return vehicle.client.name;
-        }
-
-        const client = clients.find((item) => item.id === vehicle.clientId);
-
-        return client?.name || "-";
-    }
-
-    function getCategoryName(vehicle: Vehicle) {
-        if (vehicle.category?.name) {
-            return vehicle.category.name;
-        }
-
-        const category = categories.find((item) => item.id === vehicle.categoryId);
-
-        return category?.name || "-";
-    }
-
     function resetForm() {
         setPlaca("");
         setMarca("");
         setModelo("");
         setCor("");
         setClientId("");
+        setClientIdLabel("");
         setCategoryId("");
-        setClientSearch("");
-        setCategorySearch("");
+        setCategoryIdLabel("");
     }
 
-    async function openForm() {
+    function openForm() {
         resetForm();
         setErrorMessage("");
         setmodalMode("create")
         setSelectVehicleId("")
 
-        if (clients.length === 0 || categories.length === 0) {
-            await loadFormData();
-        }
 
         setIsFormOpen(true);
     }
@@ -258,7 +126,7 @@ export function VehiclesPage() {
 
             closeForm();
 
-            await loadVehicles();
+            list.refresh();
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 const responseData = error.response?.data as { message?: string };
@@ -285,7 +153,9 @@ export function VehiclesPage() {
         setModelo(vehicles.modelo)
         setMarca(vehicles.marca)
         setClientId(vehicles.clientId)
+        setClientIdLabel(vehicles.client?.name ?? vehicles.clientId)
         setCategoryId(vehicles.categoryId)
+        setCategoryIdLabel(vehicles.category?.name ?? vehicles.categoryId)
 
         setIsFormOpen(true)
 
@@ -305,33 +175,33 @@ export function VehiclesPage() {
                 </Button>
             </header>
 
-            {errorMessage && (
-                <div className={styles.errorMessage}>{errorMessage}</div>
+            {(errorMessage || list.error) && (
+                <div className={styles.errorMessage}>{errorMessage || list.error}</div>
             )}
 
             <div className={styles.summaryGrid}>
                 <div className={styles.summaryCard}>
                     <span>Total de veículos</span>
-                    <strong>{vehicles.length}</strong>
+                    <strong>{list.summary?.total ?? 0}</strong>
                 </div>
 
                 <div className={styles.summaryCard}>
                     <span>Com cliente</span>
                     <strong>
-                        {vehicles.filter((vehicle) => vehicle.clientId).length}
+                        {list.summary?.total ?? 0}
                     </strong>
                 </div>
 
                 <div className={styles.summaryCard}>
                     <span>Categorias</span>
                     <strong>
-                        {new Set(vehicles.map((vehicle) => vehicle.categoryId)).size}
+                        {list.summary?.categories ?? 0}
                     </strong>
                 </div>
 
                 <div className={styles.summaryCard}>
                     <span>Resultados</span>
-                    <strong>{filteredVehicles.length}</strong>
+                    <strong>{list.total}</strong>
                 </div>
             </div>
 
@@ -408,74 +278,17 @@ export function VehiclesPage() {
 
                         <div className={styles.formGrid}>
                             <div className={styles.selectGroup}>
-                                <label htmlFor="clientSearch">Cliente</label>
-
-                                <input
-                                    id="clientSearch"
-                                    type="text"
-                                    className={styles.selectSearchInput}
-                                    placeholder="Pesquisar cliente por nome, email, telefone ou documento..."
-                                    value={clientSearch}
-                                    onChange={(event) => {
-                                        setClientSearch(event.target.value);
-                                        setClientId("");
-                                    }}
-                                />
-
-                                <select
-                                    id="clientId"
-                                    value={clientId}
-                                    onChange={(event) => setClientId(event.target.value)}
-                                >
-                                    <option value="">Selecione um cliente</option>
-
-                                    {filteredClients.map((client) => (
-                                        <option key={client.id} value={client.id}>
-                                            {client.name}
-                                            {client.documento ? ` - ${client.documento}` : ""}
-                                            {client.email ? ` - ${client.email}` : ""}
-                                        </option>
-                                    ))}
-                                </select>
-
-                                <small className={styles.selectHelpText}>
-                                    {filteredClients.length} cliente(s) encontrado(s)
-                                </small>
+                                <PagedSelect<Client> id="clientId" label="Cliente" path="/clients" scope="active-default"
+                                    value={clientId} selectedLabel={clientIdLabel}
+                                    format={item => [item.name, item.documento, item.email].filter(Boolean).join(" - ")}
+                                    onChange={(id, text) => { setClientId(id); setClientIdLabel(text); }} />
                             </div>
 
                             <div className={styles.selectGroup}>
-                                <label htmlFor="categorySearch">Categoria</label>
-
-                                <input
-                                    id="categorySearch"
-                                    type="text"
-                                    className={styles.selectSearchInput}
-                                    placeholder="Pesquisar categoria por nome ou descrição..."
-                                    value={categorySearch}
-                                    onChange={(event) => {
-                                        setCategorySearch(event.target.value);
-                                        setCategoryId("");
-                                    }}
-                                />
-
-                                <select
-                                    id="categoryId"
-                                    value={categoryId}
-                                    onChange={(event) => setCategoryId(event.target.value)}
-                                >
-                                    <option value="">Selecione uma categoria</option>
-
-                                    {filteredCategories.map((category) => (
-                                        <option key={category.id} value={category.id}>
-                                            {category.name}
-                                            {category.description ? ` - ${category.description}` : ""}
-                                        </option>
-                                    ))}
-                                </select>
-
-                                <small className={styles.selectHelpText}>
-                                    {filteredCategories.length} categoria(s) encontrada(s)
-                                </small>
+                                <PagedSelect<vehicleCategory> id="categoryId" label="Categoria" path="/vehicle-categories" scope="active-default"
+                                    value={categoryId} selectedLabel={categoryIdLabel}
+                                    format={item => [item.name, item.description].filter(Boolean).join(" - ")}
+                                    onChange={(id, text) => { setCategoryId(id); setCategoryIdLabel(text); }} />
                             </div>
                         </div>
 
@@ -496,13 +309,13 @@ export function VehiclesPage() {
 
                             <div>
                                 <span>Cliente</span>
-                                <p>{selectedClient?.name || "Nenhum cliente selecionado"}</p>
+                                <p>{clientIdLabel || "Nenhum cliente selecionado"}</p>
                             </div>
 
                             <div>
                                 <span>Categoria</span>
                                 <p>
-                                    {selectedCategory?.name || "Nenhuma categoria selecionada"}
+                                    {categoryIdLabel || "Nenhuma categoria selecionada"}
                                 </p>
                             </div>
                         </div>
@@ -546,13 +359,13 @@ export function VehiclesPage() {
                                 <tr key={vehicle.id}>
                                     <td>{vehicle.placa}</td>
 
-                                    <td>{getClientName(vehicle)}</td>
+                                    <td>{vehicle.client?.name || "—"}</td>
 
                                     <td>
                                         {vehicle.marca} {vehicle.modelo}
                                     </td>
 
-                                    <td>{getCategoryName(vehicle)}</td>
+                                    <td>{vehicle.category?.name || "—"}</td>
 
                                     <td>{vehicle.cor}</td>
 
@@ -586,6 +399,7 @@ export function VehiclesPage() {
                     </table>
                 )}
             </div>
+      <Pagination {...list} label="Paginação de veículos" />
         </section>
     );
 }

@@ -22,6 +22,7 @@
 }
 
 body {
+  overflow-wrap: anywhere;
   margin: 0;
   font-family: Inter, Arial, Helvetica, sans-serif;
   background: var(--color-background);
@@ -35,4 +36,9 @@ input {
 
 button {
   cursor: pointer;
+}
+
+input, select, textarea {
+  min-width: 0;
+  max-width: 100%;
 }

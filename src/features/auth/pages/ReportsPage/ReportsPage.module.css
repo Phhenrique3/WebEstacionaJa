@@ -59,7 +59,7 @@
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 18px;
-  padding: 28px;
+  padding: clamp(12px, 3vw, 28px);
 }
 
 .reportList {
@@ -69,11 +69,12 @@
 }
 
 .reportItem {
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 24px;
+  padding: clamp(12px, 2vw, 24px);
   border: 1px solid #e5e7eb;
   border-radius: 16px;
   background: #f9fafb;
