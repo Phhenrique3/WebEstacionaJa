@@ -1,20 +1,19 @@
 .card {
-    background: #3e5cd4;
-    padding: 24px;
-    border-radius: 14px;
-    border: 1px solid #e5e7eb;
-
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #dce0ea;
+  border-radius: 14px;
+  background: white;
 }
 
 .card span {
-    color: #ffffff;
-    font-size: 14px;
+  color: #515c6c;
+  font-size: .9rem;
 }
 
 .card strong {
-    color: #ffffff;
-    font-size: 28px;
+  color: #261b73;
+  font-size: 1.75rem;
 }

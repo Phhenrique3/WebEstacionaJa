@@ -1,17 +1,28 @@
 .layout {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: clamp(250px, 22vw, 288px) minmax(0, 1fr);
   background: #f4f6fb;
   transition: grid-template-columns 0.25s ease;
 }
 
 .layoutCollapsed {
-  grid-template-columns: 82px 1fr;
+  grid-template-columns: 82px minmax(0, 1fr);
 }
 
 .content {
-  grid-column: 2;
   min-width: 0;
-  padding: 32px;
+  padding: clamp(16px, 3vw, 32px);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layout {
+    transition: none;
+  }
 }
