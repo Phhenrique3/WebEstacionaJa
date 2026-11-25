@@ -1,0 +1,38 @@
+.dialog {
+  width: min(36rem, calc(100% - 2rem));
+  max-height: 85dvh;
+  overflow: auto;
+  padding: clamp(16px, 4vw, 28px);
+  border: 1px solid #dde1ea;
+  border-radius: 16px;
+  color: #1f2937;
+}
+
+.dialog::backdrop { background: rgb(15 23 42 / 50%); }
+
+.dialog header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.dialog h2 { margin: 0; font-size: 1.3rem; }
+.dialog button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #261b73;
+  color: white;
+}
+
+.dialog dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 16px;
+  margin: 20px 0 0;
+}
+
+.dialog dt { color: #515c6c; font-size: .875rem; }
+.dialog dd { margin: 4px 0 0; overflow-wrap: anywhere; font-weight: 600; }

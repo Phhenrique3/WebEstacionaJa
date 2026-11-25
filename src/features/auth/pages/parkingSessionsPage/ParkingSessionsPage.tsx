@@ -1,3 +1,5 @@
+import { ParkingSessionDetailsModal } from "../../../../components/parking/ParkingSessionDetailsModal/ParkingSessionDetailsModal";
+import { formatDate, formatMinutes, formatCurrency } from "../../parkingSessionFormat";
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 
@@ -48,6 +50,7 @@ export function ParkingSessionsPage() {
     const [search, setSearch] = useState("");
     const [vehicles, setVehicles] = useState<Vehicle[]>([])
     const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([])
+    const [detailSessionId, setDetailSessionId] = useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [isCreatingSession, setIsCreatingSession] = useState(false)
 
@@ -336,58 +339,8 @@ export function ParkingSessionsPage() {
         return statusClasses[status];
     }
 
-    /** Formata uma data ISO para o padrão brasileiro com data e hora. */
-    function formatDate(dateValue: string | null) {
-        if (!dateValue) {
-            return "-";
-        }
 
-        return new Intl.DateTimeFormat("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        }).format(new Date(dateValue));
-    }
 
-    /** Converte minutos em uma duração legível em horas e minutos. */
-    function formatMinutes(minutes: number | null) {
-        if (!minutes) {
-            return "-";
-        }
-
-        if (minutes < 60) {
-            return `${minutes} min`;
-        }
-
-        const hours = Math.floor(minutes / 60);
-        const remainingMinutes = minutes % 60;
-
-        if (remainingMinutes === 0) {
-            return `${hours}h`;
-        }
-
-        return `${hours}h ${remainingMinutes}min`;
-    }
-
-    /** Converte centavos em moeda brasileira para exibição. */
-    function formatCurrency(value: string | number | null) {
-        if (value === null || value === undefined) {
-            return "-";
-        }
-
-        const numericValue = Number(value);
-
-        if (Number.isNaN(numericValue)) {
-            return "-";
-        }
-
-        return new Intl.NumberFormat("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-        }).format(numericValue / 100);
-    }
 
 
     /** Limpa as seleções e buscas do formulário de registro de entrada. */
@@ -552,7 +505,7 @@ export function ParkingSessionsPage() {
                                                     </button>
                                                 </>
                                             ) : (
-                                                <button type="button">Detalhes</button>
+                                                <button type="button" onClick={() => setDetailSessionId(session.id)}>Detalhes</button>
                                             )}
                                         </div>
                                     </td>
@@ -570,6 +523,14 @@ export function ParkingSessionsPage() {
                     </table>
                 )}
             </div>
+            {detailSessionId && (
+                <ParkingSessionDetailsModal
+                    key={detailSessionId}
+                    sessionId={detailSessionId}
+                    onClose={() => setDetailSessionId(null)}
+                />
+            )}
+
             {isCreateModalOpen && (
                 <div className={styles.modalOverlay}>
                     <div className={styles.modal}>
